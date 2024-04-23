@@ -1,0 +1,15 @@
+{
+  "name": "secure-store",
+  "version": "1.0.0",
+  "description": "A safe store",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ext" : "cd extension && npm run build:chrome",
+    "dev:server": "air",
+    "build:server" : "go build -o dist/main src/main.go",
+    "build:server:linux" : "GOOS=linux GOARCH=amd64 go build -o dist/main-linux src/main.go",
+    "start:server" : "go run src/main.go"
+  },
+  "author": "Anandu",
+  "license": "ISC"
+}
