@@ -1,23 +1,21 @@
-# Use the official Golang image to create a build artifact.
-FROM golang:1.22.2-alpine
+FROM golang:1.22-alpine
 
-# Set the working directory inside the container.
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy go.mod and go.sum files to the working directory.
+# Copy only the necessary files for dependency download and building.
 COPY go.mod go.sum ./
 
-# Download all dependencies.
+# Download dependencies.
 RUN go mod download
 
-# Copy the source code into the container.
-COPY src/ ./src
+# Install necessary tools.
+RUN go install github.com/cosmtrek/air@latest
 
-# Set the working directory to the source code directory.
-WORKDIR /app/src
+# Copy the rest of the source code.
+COPY . .
 
-# Build the application.
-RUN go build -o main .
+# Clean up unwanted directories.
+RUN rm -rf extension/ frontend/
 
-# Run the executable.
-CMD ["air"]
+# Clean up and tidy Go modules (optional).
+RUN go mod tidy

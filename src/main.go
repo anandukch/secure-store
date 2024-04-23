@@ -4,7 +4,6 @@ import (
 	"os"
 	"pass-saver/src/config"
 	"pass-saver/src/routes"
-
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -22,5 +21,5 @@ func main() {
 
 	routes.AuthRoutes(app)
 
-	app.Listen(":8080")
+	app.Listen(":3000")
 }

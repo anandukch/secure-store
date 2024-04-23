@@ -1,16 +1,13 @@
-version: '3.2'
+version: '3.8'
 
 services:
-  server:
-    container_name: go-server
-    build:
-      context: .
-      dockerfile: Dockerfile
+  go-server:
+    build: .
+    env_file:
+      - .env
     ports:
-      - "8080:8080"
+      - "3000:3000"
     volumes:
-      - .:/app
-    environment:
-      - PORT=8080
-    command: go run main.go
-
+      - .:/usr/src/app
+    command: air 
+  
