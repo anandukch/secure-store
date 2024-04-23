@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "name": "Password saver",
+    "version": "1.0",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "scripting",
+        "storage",
+        "activeTab"
+    ],
+    "host_permissions": ["<all_urls>"],
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["./index.global.js"]
+        }
+    ],
+    "background": {
+        "service_worker": "background.global.js"
+    }
+}

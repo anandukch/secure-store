@@ -1,0 +1,16 @@
+version: '3.2'
+
+services:
+  server:
+    container_name: go-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    environment:
+      - PORT=8080
+    command: go run main.go
+
