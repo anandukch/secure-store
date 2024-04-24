@@ -1,6 +1,15 @@
 package routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"pass-saver/src/controllers"
 
-func AuthRoutes(app *fiber.App) {
+	"github.com/gofiber/fiber/v2"
+)
+
+func AuthRoutes(router fiber.Router) {
+	router.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Auth Route")
+	})
+
+	router.Post("/signup", controllers.CreateUser)
 }

@@ -3,59 +3,31 @@ package controllers
 import (
 	"context"
 	"net/http"
-	"pass-saver/src/config"
 	"pass-saver/src/models"
-	"pass-saver/src/resposnes"
+	responses "pass-saver/src/responses"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection *mongo.Collection = config.GetCollection("users")
-
-var validate = validator.New()
-
-func CreateUser(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(context.Background(),10*time.Second)
+func GetUserProfile(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	userId := c.Params("id")
 	var user models.User
 	defer cancel()
 
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(resposnes.UserResponse{
-			Status: http.StatusBadRequest,
-			Message: "Invalid request",
-			Data: &fiber.Map{"data":err.Error()},
-		})
-	}
+	print(userId)
 
-	if validationErr := validate.Struct(&user); validationErr != nil{
-		return c.Status(http.StatusBadRequest).JSON(resposnes.UserResponse{
-			Status: http.StatusBadRequest,
-			Message: "error",
-			Data: &fiber.Map{"data":validationErr.Error()},
-		})
-	}
+	objId, _ := primitive.ObjectIDFromHex(userId)
 
-	newUser := models.User{
-		Id : primitive.NewObjectID(),
-		Name: user.Name,
-	}
-
-	result,err := userCollection.InsertOne(ctx,newUser)
+	err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(resposnes.UserResponse{
-			Status: http.StatusInternalServerError,
-			Message: "error",
-			Data: &fiber.Map{"data":err.Error()},
-		})
+		return c.Status(http.StatusInternalServerError).JSON(responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
 	}
 
-	return c.Status(http.StatusCreated).JSON(resposnes.UserResponse{
-		Status: http.StatusCreated,
-		Message: "User created successfully",
-		Data: &fiber.Map{"data":result},
-	})
+	// return resposnes.BaseResponse(c, http.StatusOK, "User found", user)
+	// return c.Status(http.StatusOK).JSON(resposnes.UserResponse{Status: http.StatusOK, Message: "User found", Data: &fiber.Map{"data": user}})
+	return responses.BaseResponse(c, http.StatusOK, "User found", user)
 }

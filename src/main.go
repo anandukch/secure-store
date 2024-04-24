@@ -19,7 +19,10 @@ func main() {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "ok", "message": "healthcheck is ok"})
 	})
 
-	routes.AuthRoutes(app)
+	// add an endpoint called /api do that other apis listed below will follow /api/user etc 
+	api := app.Group("/api")
+	routes.AuthRoutes(api.Group("/auth"))
+	routes.UserRoutes(api.Group("/user"))
 
 	app.Listen(":3000")
 }

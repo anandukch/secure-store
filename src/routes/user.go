@@ -6,6 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func UserRoutes(app *fiber.App) {
-	app.Post("/api/user",controllers.CreateUser)
+func UserRoutes(router fiber.Router) {
+	router.Get("/:id",controllers.GetUserProfile)
 }

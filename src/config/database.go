@@ -30,6 +30,7 @@ func ConnectDB() *mongo.Client {
 	return client
 
 }
+
 var DB *mongo.Client = ConnectDB()
 
 func GetCollection(collectionName string) *mongo.Collection {
