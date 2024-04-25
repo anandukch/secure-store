@@ -4,7 +4,6 @@ import(
 	"log"
 	"os"
 	"github.com/joho/godotenv"
-	
 )
 
 func GetMongoURI() string {

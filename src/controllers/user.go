@@ -18,8 +18,6 @@ func GetUserProfile(c *fiber.Ctx) error {
 	var user models.User
 	defer cancel()
 
-	print(userId)
-
 	objId, _ := primitive.ObjectIDFromHex(userId)
 
 	err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
