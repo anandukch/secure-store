@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func UserRoutes(router fiber.Router) {
+func UserRoutes(app fiber.Router) {
+	router := app.Group("/user")
 	router.Get("/:id",controllers.GetUserProfile)
 }

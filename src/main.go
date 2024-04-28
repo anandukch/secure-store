@@ -30,8 +30,9 @@ func main() {
 
 	// add an endpoint called /api do that other apis listed below will follow /api/user etc
 	api := app.Group("/api")
-	routes.AuthRoutes(api.Group("/auth"))
-	routes.UserRoutes(api.Group("/user"))
+	routes.AuthRoutes(api)
+	routes.UserRoutes(api)
+	routes.CredentialsRoutes(api)
 
 	app.Listen(":3000")
 }

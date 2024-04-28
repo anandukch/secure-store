@@ -6,7 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func AuthRoutes(router fiber.Router) {
+func AuthRoutes(app fiber.Router) {
+	router := app.Group("/auth")
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Auth Route")
 	})
