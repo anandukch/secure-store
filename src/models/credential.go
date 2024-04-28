@@ -5,8 +5,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-// the credials model is used to store the user credentials like password username or email.
 type Credential struct {
 	Id   primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Type utils.CredType     `json:"type" bson:"type"`

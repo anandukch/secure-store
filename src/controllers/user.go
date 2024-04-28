@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 	"pass-saver/src/models"
-	responses "pass-saver/src/responses"
+	 "pass-saver/src/response"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,10 +22,10 @@ func GetUserProfile(c *fiber.Ctx) error {
 
 	err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+		return c.Status(http.StatusInternalServerError).JSON(response.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
 	}
 
 	// return resposnes.BaseResponse(c, http.StatusOK, "User found", user)
 	// return c.Status(http.StatusOK).JSON(resposnes.UserResponse{Status: http.StatusOK, Message: "User found", Data: &fiber.Map{"data": user}})
-	return responses.BaseResponse(c, http.StatusOK, "User found", user)
+	return response.BaseResponse(c, http.StatusOK, "User found", user)
 }

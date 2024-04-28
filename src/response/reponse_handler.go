@@ -1,4 +1,4 @@
-package resposnes
+package response
 
 import "github.com/gofiber/fiber/v2"
 
