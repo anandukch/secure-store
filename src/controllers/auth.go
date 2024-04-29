@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"pass-saver/src/config"
 	"pass-saver/src/models"
@@ -26,7 +25,7 @@ var validate = validator.New()
 
 func CreateUser(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var user models.User
+	var user schemas.UserRequest
 	defer cancel()
 
 	if err := c.BodyParser(&user); err != nil {
@@ -44,10 +43,19 @@ func CreateUser(c *fiber.Ctx) error {
 			Data:    &fiber.Map{"data": validationErr.Error()},
 		})
 	}
-	fmt.Println(user.Name)
+	encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(response.UserResponse{
+			Status:  http.StatusInternalServerError,
+			Message: "error",
+			Data:    &fiber.Map{"data": err.Error()},
+		})
+	}
 	newUser := models.User{
 		Id:   primitive.NewObjectID(),
 		Name: user.Name,
+		Email: user.Email,
+		Password: string(encrypted_password),
 	}
 
 	result, err := userCollection.InsertOne(ctx, newUser)
@@ -70,7 +78,9 @@ func SignIn(c *fiber.Ctx) error {
 	var request schemas.AuthRequest
 
 	if err := c.BodyParser(&request); err != nil {
-		return response.BaseResponse(c, http.StatusBadRequest, "Invalid request", err.Error())
+		return response.Response(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	if request.Email == "" || request.Password == "" {
@@ -90,7 +100,10 @@ func SignIn(c *fiber.Ctx) error {
 		return response.BaseResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
 
-	return response.BaseResponse(c, http.StatusOK, "User logged in", token)
+	return response.Response(c, http.StatusOK, "User logged in", &fiber.Map{
+		"token": token,
+	})
+
 
 }
 

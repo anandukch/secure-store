@@ -18,6 +18,10 @@ func BaseResponse(c *fiber.Ctx,status int, message string, data interface{}) err
 	})
 }
 
-// func BaseResponse(c *fiber.Ctx, status int, message string, data *fiber.Map) error {
-// 	return c.Status(status).JSON(UserResponse{Status: status, Message: message, Data: data})
-// }
+func Response(c *fiber.Ctx, status int, message string, data interface{}) error {
+	return c.Status(status).JSON(&fiber.Map{
+		"status":  status,
+		"message": message,
+		"data":    data,
+	})
+}

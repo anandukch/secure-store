@@ -13,4 +13,5 @@ func AuthRoutes(app fiber.Router) {
 	})
 
 	router.Post("/signup", controllers.CreateUser)
+	router.Post("/login", controllers.SignIn)
 }
