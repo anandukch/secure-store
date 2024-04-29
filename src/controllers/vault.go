@@ -38,6 +38,10 @@ func AddToVault(c *fiber.Ctx) error {
 		return response.Response(c, http.StatusBadRequest, "error", validationErr.Error())
 	}
 
+	if err := validateType(&vault); err != nil {
+		return response.Response(c, http.StatusBadRequest, "error", err.Error())
+	}
+
 	newVault := models.Vault{
 		UserId: user.Id,
 		Type:   vault.Type,
@@ -58,13 +62,13 @@ func AddToVault(c *fiber.Ctx) error {
 
 
 func validateType(vault *schemas.VaultSchema) error {
-    validTypes := []utils.CredType{utils.Password}
+	validTypes := []utils.CredType{utils.Password}
 
-    for _, t := range validTypes {
-        if vault.Type == t {
-            return nil // Type is valid
-        }
-    }
+	for _, t := range validTypes {
+		if vault.Type == t {
+			return nil
+		}
+	}
 
-    return errors.New("Invalid Type") // Type is not valid
+	return errors.New("invalid value in type field") // Type is not valid
 }
