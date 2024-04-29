@@ -5,10 +5,9 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-type Credential struct {
+type Vault struct {
 	Id   primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	UserId primitive.ObjectID `json:"userId" bson:"userId"`
 	Type utils.CredType     `json:"type" bson:"type"`
-	Username string         `json:"username" bson:"username"`
-	Email	string         `json:"email" bson:"email"`
-	Password string        `json:"password" bson:"password"`
+	Data interface{}        `json:"data" bson:"data"`
 }

@@ -9,5 +9,6 @@ import (
 
 func CredentialsRoutes(app fiber.Router) {
 	router := app.Group("/vault")
-	router.Get("/", middlewares.AuthMiddleWare, controllers.GetCredentials)
+	router.Get("/", middlewares.AuthMiddleWare, controllers.GetVault)
+	router.Post("/",middlewares.AuthMiddleWare,controllers.AddToVault)
 }
