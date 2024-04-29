@@ -1,7 +1,8 @@
 package utils
 
-type CredType string
+type VaultType string
 
 const (
-	Password CredType = "password"
+	Credentias VaultType = "password"
 )
+

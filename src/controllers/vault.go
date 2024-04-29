@@ -2,29 +2,38 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"pass-saver/src/config"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
-	"pass-saver/src/schemas"
-	"pass-saver/src/utils"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var vaultCollection *mongo.Collection = config.GetCollection("vault")
 
 func GetVault(c *fiber.Ctx) error {
-	return c.SendString("GetCredentials")
+	user := c.Locals("user").(models.User)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var userVault models.Vault
+	err := vaultCollection.FindOne(ctx, bson.M{"userId": user.Id}).Decode(&userVault)
+
+	if err != nil {
+		return response.Response(c, http.StatusNotFound, "error", "Vault not found")
+	}
+
+	return response.Response(c, http.StatusOK, "success", userVault.Data)
 }
 
 func AddToVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var vault schemas.VaultSchema
+	var vault models.VaultData
 	defer cancel()
 
 	if err := c.BodyParser(&vault); err != nil {
@@ -38,37 +47,73 @@ func AddToVault(c *fiber.Ctx) error {
 		return response.Response(c, http.StatusBadRequest, "error", validationErr.Error())
 	}
 
-	if err := validateType(&vault); err != nil {
-		return response.Response(c, http.StatusBadRequest, "error", err.Error())
-	}
+	var userVault models.User
+	err := vaultCollection.FindOne(ctx, bson.M{"userId": user.Id}).Decode(&userVault)
 
-	newVault := models.Vault{
-		UserId: user.Id,
-		Type:   vault.Type,
-		Data:   vault.Data,
-	}
-
-	result, err := vaultCollection.InsertOne(ctx, newVault)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
-			"message": "error",
-			"error":   err.Error(),
-		})
-	}
-
-	return response.Response(c, http.StatusOK, "success", result.InsertedID)
-
-}
-
-
-func validateType(vault *schemas.VaultSchema) error {
-	validTypes := []utils.CredType{utils.Password}
-
-	for _, t := range validTypes {
-		if vault.Type == t {
-			return nil
+		newVault := models.Vault{
+			UserId: user.Id,
+			Data:   []models.VaultData{vault},
 		}
+	
+		_, err = vaultCollection.InsertOne(ctx, newVault)
+
+		if err != nil {
+			return response.Response(c, http.StatusInternalServerError, "error", err.Error())
+		}
+
+		return response.Response(c, http.StatusOK, "success", "Vault created successfully")
+
 	}
 
-	return errors.New("invalid value in type field") // Type is not valid
+	_, err = vaultCollection.UpdateOne(ctx, bson.M{"userId": user.Id}, bson.M{"$push": bson.M{"data": vault}})
+
+	if err != nil {
+		return response.Response(c, http.StatusInternalServerError, "error", err.Error())
+	}
+
+	return response.Response(c, http.StatusOK, "success", "Vault updated successfully")
+
 }
+
+
+// func validateType(vault *schemas.VaultSchema) error {
+// 	validTypes := []utils.VaultType{utils.Credentias}
+
+// 	for _, t := range validTypes {
+// 		if vault.Type == t {
+// 			return nil
+// 		}
+// 	}
+
+// 	return errors.New("invalid value in type field") // Type is not valid
+// }
+// var ErrInvalidRequest = errors.New("invalid request: Only one of Credentias, Card, or Personal is allowed")
+
+// func validateVault(v *schemas.VaultSchema) error {
+// 	if isEmpty(v.Credentias) && isEmpty(v.Card) && isEmpty(v.Personal) {
+// 		return ErrInvalidRequest
+// 	}
+
+// 	count := 0
+// 	if !isEmpty(v.Credentias) {
+// 		count++
+// 	}
+// 	if !isEmpty(v.Card) {
+// 		count++
+// 	}
+// 	if !isEmpty(v.Personal) {
+// 		count++
+// 	}
+
+// 	if count != 1 {
+// 		return ErrInvalidRequest
+// 	}
+
+// 	return nil
+// }
+
+// // Function to check if a struct is empty
+// func isEmpty(s interface{}) bool {
+// 	return reflect.DeepEqual(s, reflect.Zero(reflect.TypeOf(s)).Interface())
+// }

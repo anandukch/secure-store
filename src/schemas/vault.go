@@ -1,8 +1,8 @@
 package schemas
 
-import "pass-saver/src/utils"
+import "pass-saver/src/models"
 
 type VaultSchema struct{
-	Type utils.CredType `json:"type" default:"password" validate:"required"`
-	Data interface{} `json:"data" validate:"required"`
+	Data models.VaultData `json:"data" bson:"data"`
+	Site string `json:"site" bson:"site" validate:"required"`
 }
