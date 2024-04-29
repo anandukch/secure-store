@@ -4,10 +4,9 @@ import (
 	"context"
 	"net/http"
 	"pass-saver/src/config"
+	"pass-saver/src/handler"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
-
-	"github.com/dgrijalva/jwt-go"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -95,7 +94,7 @@ func SignIn(c *fiber.Ctx) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
 		return response.BaseResponse(c, http.StatusBadRequest, "Invalid request", "Invalid password")
 	}
-	token, err := GenerateJwtToken(user.Id.Hex(), user.Email)
+	token, err :=handler.GenerateJwtToken(user.Id.Hex(), user.Email)
 	if err != nil {
 		return response.BaseResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
@@ -107,11 +106,4 @@ func SignIn(c *fiber.Ctx) error {
 
 }
 
-func GenerateJwtToken(userId string, email string) (string, error) {
-	claims := jwt.MapClaims{}
-	claims["email"] = email
-	claims["id"] = userId
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte("secret"))
-}
+
