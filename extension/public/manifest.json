@@ -9,7 +9,8 @@
         "scripting",
         "storage",
         "activeTab",
-        "tabs"
+        "tabs",
+        "webNavigation"
     ],
     "host_permissions": ["<all_urls>"],
     "content_scripts": [
