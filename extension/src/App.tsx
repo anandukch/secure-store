@@ -2,17 +2,26 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import browser from 'webextension-polyfill'
 
 function App() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
     console.log('App mounted')
+    browser.runtime.onMessage.addListener((msg) => {
+      console.log(msg)
+    }
+    )
     return () => {
       console.log('App unmounted')
     }
   }
   , [])
+
+  const onClickHandler=()=>{
+    browser.runtime.sendMessage({ action: 'pop' })
+  }
 
   return (
     <>
@@ -36,6 +45,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <button onClick={onClickHandler}>Click</button>
     </>
   )
 }

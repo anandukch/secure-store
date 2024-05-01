@@ -8,7 +8,6 @@ import React, { useEffect } from "react";
 function App() {
     useEffect(() => {
         console.log("App mounted");
-        // /check whether the page os a login page and if so, send a message to the background script
         if (window.location.href.includes("login")) {
             // browser.runtime.sendMessage({ action: 'login page detected' });
             // find the username and password fields and fill them in
@@ -19,13 +18,41 @@ function App() {
             console.log(usernameField, passwordField);
 
             // inert the username and password into the fields
-            document.querySelector('input[type="email"]')?.setAttribute("value", "username");
+            document.querySelector('input[name="username"]')?.setAttribute("value", "username");
             document.querySelector('input[name="password"]')?.setAttribute("value", "password");
-
+            
             browser.runtime.sendMessage({ action: "fetch" }).then((response) => {
                 console.log("response", response);
             });
         }
+
+
+
+        const handleUserInteraction = (event) => {
+            // Check if the target element is an input field or textarea
+            if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
+                const fieldInfo = {
+                    type: event.target.tagName,
+                    value: event.target.value,
+                    action: event.type // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
+                };
+
+                console.log("Field information:", fieldInfo);
+                
+
+                // Send message to background script with field information
+                // browser.runtime.sendMessage({ action: "form_interaction", payload: fieldInfo }).then((response) => {
+                //     console.log("Response from background script:", response);
+                // });
+            }
+        };
+
+
+        document.addEventListener("keydown", handleUserInteraction);
+        document.addEventListener("keyup", handleUserInteraction);
+        document.addEventListener("click", handleUserInteraction);
+        document.addEventListener("focus", handleUserInteraction);
+        document.addEventListener("change", handleUserInteraction);
 
         return () => {
             console.log("App unmounted");
