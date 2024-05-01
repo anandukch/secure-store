@@ -20,25 +20,28 @@ function App() {
             // inert the username and password into the fields
             document.querySelector('input[name="username"]')?.setAttribute("value", "username");
             document.querySelector('input[name="password"]')?.setAttribute("value", "password");
-            
+
             browser.runtime.sendMessage({ action: "fetch" }).then((response) => {
                 console.log("response", response);
             });
         }
 
-
-
         const handleUserInteraction = (event) => {
+            // if (event.target.tagName === "BUTTON") {
+            //     console.log("Login button clicked");
+                browser.runtime.sendMessage({ action: "login", data: event });
+            // }
+
             // Check if the target element is an input field or textarea
             if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
                 const fieldInfo = {
                     type: event.target.tagName,
                     value: event.target.value,
-                    action: event.type // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
+                    action: event.type, // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
                 };
+                // check if it is a login button
 
                 console.log("Field information:", fieldInfo);
-                
 
                 // Send message to background script with field information
                 // browser.runtime.sendMessage({ action: "form_interaction", payload: fieldInfo }).then((response) => {
@@ -46,7 +49,6 @@ function App() {
                 // });
             }
         };
-
 
         document.addEventListener("keydown", handleUserInteraction);
         document.addEventListener("keyup", handleUserInteraction);

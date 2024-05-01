@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "build:js": "vite build --config vite.content.config.ts",
     "build:background": "vite build --config vite.chrome.config.ts",
-    "build:chrome": "npm run build:js && npm run build:web && npm run build:background"
+    "build:chrome": "npm run build:js && npm run build:web && npm run build:background",
+    "dev:chrome": "nodemon"
   },
   "dependencies": {
     "axios": "^1.6.8",
@@ -20,16 +21,20 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.266",
+    "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/webextension-polyfill": "^0.10.7",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "child_process": "^1.0.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "gulp": "^5.0.0",
+    "gulp-watch": "^5.0.1",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "webextension-polyfill": "^0.11.0"

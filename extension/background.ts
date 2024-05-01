@@ -39,6 +39,10 @@ browser.runtime.onMessage.addListener((msg, sender, response) => {
         });
     }
 
+    if(msg.action === "login"){
+        console.log(msg.data);
+    }
+
     browser.windows.getAll({populate:true}).then((windows) => {
         console.log("windows", windows);
         

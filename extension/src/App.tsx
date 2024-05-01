@@ -20,7 +20,7 @@ function App() {
   , [])
 
   const onClickHandler=()=>{
-    browser.runtime.sendMessage({ action: 'pop' })
+    browser.runtime.sendMessage({ action: 'pop' });
   }
 
   return (
