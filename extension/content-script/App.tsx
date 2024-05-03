@@ -9,12 +9,8 @@ function App() {
     useEffect(() => {
         console.log("App mounted");
 
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOM content loaded");
-            
-            browser.runtime.sendMessage({ action: 'pageRefreshed' });
-        });
-        browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
+       
+        // browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
         if (window.location.href.includes("login")) {
             // browser.runtime.sendMessage({ action: 'login page detected' });
             // find the username and password fields and fill them in
@@ -82,21 +78,21 @@ function App() {
             // }
 
             // Check if the target element is an input field or textarea
-            // if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
-            //     const fieldInfo = {
-            //         type: event.target.tagName,
-            //         value: event.target.value,
-            //         action: event.type, // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
-            //     };
-            //     // check if it is a login button
+            if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
+                const fieldInfo = {
+                    type: event.target.tagName,
+                    value: event.target.value,
+                    action: event.type, // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
+                };
+                // check if it is a login button
 
-            //     console.log("Field information:", fieldInfo);
+                console.log("Field information:", fieldInfo);
 
-            //     // Send message to background script with field information
-            //     // browser.runtime.sendMessage({ action: "form_interaction", payload: fieldInfo }).then((response) => {
-            //     //     console.log("Response from background script:", response);
-            //     // });
-            // }
+                // Send message to background script with field information
+                browser.runtime.sendMessage({ action: "form_interaction", payload: fieldInfo }).then((response) => {
+                    console.log("Response from background script:", response);
+                });
+            }
         };
 
         document.addEventListener("keydown", handleUserInteraction);
