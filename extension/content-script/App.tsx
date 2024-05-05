@@ -1,15 +1,29 @@
 import browser from "webextension-polyfill";
 import React, { useEffect } from "react";
+import Confirmation from "./components/Confirmation";
 
 // function handleClick () {
 //   browser.runtime.sendMessage({ action: 'Hi from content script 👋' });
 // }
 
 function App() {
+    const [showConfirmation, setShowConfirmation] = React.useState(false);
     useEffect(() => {
         console.log("App mounted");
+        browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } })
+        browser.runtime.onMessage.addListener((msg) => {
+            if (msg.action === "mount") {
+               if(msg.payload.globalState.showPopup) {
+                     setShowConfirmation(true);
+               }
+                // showPopup();
+            }
+            
+            // msg.action === "mount" 
 
-       
+            return Promise.resolve("Got your message");
+        }
+        );
         // browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
         if (window.location.href.includes("login")) {
             // browser.runtime.sendMessage({ action: 'login page detected' });
@@ -37,8 +51,8 @@ function App() {
             };
 
             if ((fieldInfo.type === "BUTTON" || fieldInfo.value === "Login") && fieldInfo.action === "click") {
-                // console.log("Login button clicked");
-                // can we get the resposne of the fetch request here
+                setShowConfirmation(true);
+
                 browser.runtime.sendMessage({
                     action: "login",
                     payload: {
@@ -47,30 +61,7 @@ function App() {
                     },
                 });
             }
-            // what to know if its a form submit event when a button is clicked
-            // console.log(event.target.tagName);
 
-            // Check if the target element is an input field or textarea
-
-            // if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
-            //     const fieldInfo = {
-            //         type: event.target.tagName,
-            //         value: event.target.value,
-            //         action: event.type, // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
-            //     };
-            //     // check if it is a login button
-
-            //     console.log("Field information:", fieldInfo);
-
-            //     // Send message to background script with field information
-            //     browser.runtime.sendMessage({ action: "form_interaction", payload: fieldInfo }).then((response) => {
-            //         console.log("Response from background script:", response);
-            //     });
-            // }
-
-            // check if it is a login button
-
-            // console.log("Field information:", fieldInfo);
             browser.runtime.sendMessage({ action: "form_interaction", payload: event });
             // if (event.target.tagName === "BUTTON") {
             //     console.log("Login button clicked");
@@ -105,7 +96,7 @@ function App() {
             console.log("App unmounted");
         };
     }, []);
-    return <></>;
+    return <>{showConfirmation && <Confirmation />}</>;
 }
 
 export default App;

@@ -3,14 +3,10 @@ import browser from "webextension-polyfill";
 //     console.log(msg);
 //     }
 // );
-type Message = {
-    action: "fetch";
-    value: null;
-};
 
 type ResponseCallback = (data: object) => void;
 
-async function handleMessage({ action }: Message, response: ResponseCallback) {
+async function handleMessage({ action }: MessageInterface, response: ResponseCallback) {
     if (action === "fetch") {
         console.log("fetching data");
 
@@ -25,19 +21,20 @@ async function handleMessage({ action }: Message, response: ResponseCallback) {
 }
 
 const removePopupIfExists = () => {
-    browser.windows.getAll({ populate: true }).then((windows) => {
-        console.log("windows", windows);
+    browser.windows
+        .getAll({ populate: true })
+        .then((windows) => {
+            console.log("windows", windows);
 
-        const existingPopup = windows.find((window) => window.type === "popup");
+            const existingPopup = windows.find((window) => window.type === "popup");
 
-        if (existingPopup) {
-            browser.windows.remove(existingPopup.id!);
-        }
-    }
-    ).catch((error) => {
-        console.log("error", error);
-    }
-    );
+            if (existingPopup) {
+                browser.windows.remove(existingPopup.id!);
+            }
+        })
+        .catch((error) => {
+            console.log("error", error);
+        });
     // try {
     //     const windows = await browser.windows.getAll({ populate: true });
     //     console.log("windows", windows);
@@ -56,24 +53,30 @@ const showPopup = () => {
     browser.windows.create({
         url: "index.html",
         type: "popup",
+
         width: 500,
         height: 500,
-        top: 10,
-        left: 10,
+        top: 100,
+        left: 90,
     });
 };
 
-// interface GlobalState {
-//     url: string;
-// }
-
-// let globalState: GlobalState;
+type GlobalState = {
+    url: string;
+    showPopup: boolean;
+};
+type MessageInterface = {
+    action: string;
+    payload?: object;
+};
+let globalState: GlobalState;
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 
-browser.runtime.onMessage.addListener( (msg, sender, response) => {
+browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response) => {
+    // removePopupIfExists();
+
     handleMessage(msg, response);
-    removePopupIfExists();
     // browser.windows.getAll({populate:true}).then((windows) => {
     //     console.log("windows", windows);
 
@@ -115,27 +118,29 @@ browser.runtime.onMessage.addListener( (msg, sender, response) => {
     //         // browser.runtime.openOptionsPage();
     //     }
     // }
-    if (msg.action === "pageRefreshed") {
-        console.log("page refreshed");
-    }
-    if (msg.action === "pop") {
-        // browser.action.setPopup({ popup: "index.html" });
-        // browser.windows.create({
-        //     url: "index.html",
-        //     type: "popup",
-        //     width: 500,
-        //     height: 500,
-        //     top: 30,
-        //     left: 30,
-        // });
+
+    if (msg.action === "mount") {
+        const url = new URL((msg.payload as { url: string }).url);
+        const urlParts = url.hostname.split("/");
+        console.log("domain", urlParts[0]);
+        console.log("globalState", globalState);
+        
+        sender.tab?.id &&
+            browser.tabs.sendMessage(sender.tab.id, { action: "mount", payload: { globalState } }).then((response) => {
+                console.log("response", response);
+            });
     }
     if (msg.action === "login") {
-
         // removePopupIfExists();
-        showPopup();
-        // send reposne back
-        // console.log("login", msg.payload);
-        // createWindow();
+        const url = new URL((msg.payload as { url: string }).url);
+        const urlParts = url.hostname.split("/");
+        console.log("domain", urlParts[0]);
+        globalState = {
+            url: urlParts[0],
+            showPopup: true,
+        };
+
+
         // browser.runtime.sendMessage({ action: "login", data: msg.payload });
         // globalState = {
         //     url: msg.payload.url,
