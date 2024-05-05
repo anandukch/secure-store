@@ -2,44 +2,66 @@ import browser from "webextension-polyfill";
 import React, { useEffect } from "react";
 import Confirmation from "./components/Confirmation";
 
-// function handleClick () {
-//   browser.runtime.sendMessage({ action: 'Hi from content script 👋' });
-// }
-
 function App() {
     const [showConfirmation, setShowConfirmation] = React.useState(false);
+
+    const createSuggestionBox = (field: HTMLInputElement) => {
+        const suggestionDiv = document.createElement("div");
+        suggestionDiv.style.width = `${field.offsetWidth}px`;
+        suggestionDiv.style.height = "50px";
+        suggestionDiv.style.position = "absolute";
+        suggestionDiv.style.top = `${field.offsetTop + field.offsetHeight}px`;
+        suggestionDiv.style.left = `${field.offsetLeft}px`;
+        suggestionDiv.style.zIndex = "1000";
+        suggestionDiv.style.border = "1px solid black";
+        suggestionDiv.style.display = "none";
+        suggestionDiv.style.textAlign = "center";
+        suggestionDiv.style.color = "black";
+        suggestionDiv.style.fontWeight = "bold";
+        suggestionDiv.style.fontSize = "12px";
+        suggestionDiv.style.padding = "5px";
+        suggestionDiv.style.borderRadius = "5px";
+        suggestionDiv.style.display = "block";
+        suggestionDiv.innerText = "Suggestion";
+        field.parentNode?.appendChild(suggestionDiv);
+    };
     useEffect(() => {
         console.log("App mounted");
-        browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } })
+        browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
         browser.runtime.onMessage.addListener((msg) => {
             if (msg.action === "mount") {
-               if(msg.payload.globalState.showPopup) {
-                     setShowConfirmation(true);
-               }
-                // showPopup();
+                if (msg.payload.globalState && msg.payload.globalState.showPopup) {
+                    setShowConfirmation(true);
+                }
             }
-            
-            // msg.action === "mount" 
 
             return Promise.resolve("Got your message");
-        }
-        );
+        });
         // browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
         if (window.location.href.includes("login")) {
-            // browser.runtime.sendMessage({ action: 'login page detected' });
-            // find the username and password fields and fill them in
-            // console.log("Filling in login form");
-
             // const usernameField = document.querySelector('input[name="username"]') as HTMLInputElement;
             // const passwordField = document.querySelector('input[name="password"]') as HTMLInputElement;
             // console.log(usernameField, passwordField);
 
             // inert the username and password into the fields
-            document.querySelector('input[name="username"]')?.setAttribute("value", "username");
-            document.querySelector('input[name="password"]')?.setAttribute("value", "password");
+            // document.querySelector('input[name="username"]')?.setAttribute("value", "username");
+            // document.querySelector('input[name="password"]')?.setAttribute("value", "password");
 
-            browser.runtime.sendMessage({ action: "fetch" }).then((response) => {
-                console.log("response", response);
+            // browser.runtime.sendMessage({ action: "fetch" }).then((response) => {
+            //     console.log("response", response);
+            // });
+
+            const inputFields = document.querySelectorAll("input");
+
+            inputFields.forEach((field) => {
+                if (field.type.includes("email") || field.name === "username") {
+                    createSuggestionBox(field);
+                    field.value = "username";
+                }
+                if (field.type === "password") {
+                    createSuggestionBox(field);
+                    field.value = "password";
+                }
             });
         }
 
@@ -63,34 +85,25 @@ function App() {
             }
 
             browser.runtime.sendMessage({ action: "form_interaction", payload: event });
-            // if (event.target.tagName === "BUTTON") {
-            //     console.log("Login button clicked");
-            // browser.runtime.sendMessage({ action: "login", data: event });
-            // }
-
-            // Check if the target element is an input field or textarea
             if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
                 const fieldInfo = {
                     type: event.target.tagName,
                     value: event.target.value,
                     action: event.type, // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
                 };
-                // check if it is a login button
 
                 console.log("Field information:", fieldInfo);
-
-                // Send message to background script with field information
                 browser.runtime.sendMessage({ action: "form_interaction", payload: fieldInfo }).then((response) => {
                     console.log("Response from background script:", response);
                 });
             }
         };
 
-        document.addEventListener("keydown", handleUserInteraction);
-        document.addEventListener("keyup", handleUserInteraction);
-        document.addEventListener("click", handleUserInteraction);
-        document.addEventListener("focus", handleUserInteraction);
-        document.addEventListener("change", handleUserInteraction);
+        // document.addEventListener("keydown", handleUserInteraction);
+        // document.addEventListener("keyup", handleUserInteraction);
+        // document.addEventListener("click", handleUserInteraction);
+        // document.addEventListener("focus", handleUserInteraction);
+        // document.addEventListener("change", handleUserInteraction);
 
         return () => {
             console.log("App unmounted");
