@@ -4,7 +4,7 @@ import browser from "webextension-polyfill";
 //     }
 // );
 
-// type ResponseCallback = (data: object) => void;
+type ResponseCallback = (data: object) => void;
 
 // async function handleMessage({ action }: MessageInterface, response: ResponseCallback) {
 //     if (action === "fetch") {
@@ -39,11 +39,8 @@ let globalState: GlobalState;
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 
-browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response) => {
-
-
-    // handleMessage(msg, response);
-
+browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response:ResponseCallback) => {
+    response({ message: "success" });
     if (msg.action === "mount") {
         const url = new URL((msg.payload!.url! as string));
         const urlParts = url.hostname.split("/");

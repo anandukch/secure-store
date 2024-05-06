@@ -27,8 +27,6 @@ func main() {
 	app.Get("/healthcheck", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "ok", "message": "healthcheck is ok"})
 	})
-
-	// add an endpoint called /api do that other apis listed below will follow /api/user etc
 	api := app.Group("/api")
 	routes.AuthRoutes(api)
 	routes.UserRoutes(api)

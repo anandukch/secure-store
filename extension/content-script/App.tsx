@@ -25,6 +25,7 @@ function App() {
         suggestionDiv.innerText = "Suggestion";
         field.parentNode?.appendChild(suggestionDiv);
     };
+    
     useEffect(() => {
         console.log("App mounted");
         browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
@@ -55,11 +56,11 @@ function App() {
 
             inputFields.forEach((field) => {
                 if (field.type.includes("email") || field.name === "username") {
-                    createSuggestionBox(field);
+                    // createSuggestionBox(field);
                     field.value = "username";
                 }
                 if (field.type === "password") {
-                    createSuggestionBox(field);
+                    // createSuggestionBox(field);
                     field.value = "password";
                 }
             });
