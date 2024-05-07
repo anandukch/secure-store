@@ -7,7 +7,7 @@ import (
 type Vault struct {
 	Id     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	UserId primitive.ObjectID `json:"userId" bson:"userId"`
-	Data []VaultData `json:"data" bson:"data"`
+	Data []VaultData `json:"data" bson:"data" default:"[]"`
 	// Credit Card
 	// Number string `json:"number" bson:"number"`
 	// Expire string `json:"expire" bson:"expire"`

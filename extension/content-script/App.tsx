@@ -90,7 +90,7 @@ function App() {
                 const fieldInfo = {
                     type: event.target.tagName,
                     value: event.target.value,
-                    action: event.type, // 'keydown', 'keyup', 'click', 'focus', 'change', etc.
+                    action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
                 };
 
                 console.log("Field information:", fieldInfo);

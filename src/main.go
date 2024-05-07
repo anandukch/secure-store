@@ -32,5 +32,5 @@ func main() {
 	routes.UserRoutes(api)
 	routes.CredentialsRoutes(api)
 
-	app.Listen(":3000")
+	app.Listen(":5000")
 }
