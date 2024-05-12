@@ -28,7 +28,12 @@ function App() {
 
     useEffect(() => {
         console.log("App mounted");
-        browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
+        browser.runtime.sendMessage({
+            action: "mount",
+            payload: {
+                url: window.location.href,
+            },
+        });
         browser.runtime.onMessage.addListener((msg) => {
             if (msg.action === "mount") {
                 if (msg.payload.globalState && msg.payload.globalState.showPopup) {
@@ -73,7 +78,10 @@ function App() {
                 action: event.type,
             };
 
-            if ((fieldInfo.type === "BUTTON" || fieldInfo.value === "Login") && fieldInfo.action === "click") {
+            if (
+                (fieldInfo.type === "BUTTON" || fieldInfo.value === "Login") &&
+                fieldInfo.action === "click"
+            ) {
                 setShowConfirmation(true);
 
                 browser.runtime.sendMessage({
@@ -85,7 +93,10 @@ function App() {
                 });
             }
 
-            browser.runtime.sendMessage({ action: "form_interaction", payload: event });
+            browser.runtime.sendMessage({
+                action: "form_interaction",
+                payload: event,
+            });
             if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
                 const fieldInfo = {
                     type: event.target.tagName,
@@ -94,9 +105,14 @@ function App() {
                 };
 
                 console.log("Field information:", fieldInfo);
-                browser.runtime.sendMessage({ action: "form_interaction", payload: fieldInfo }).then((response) => {
-                    console.log("Response from background script:", response);
-                });
+                browser.runtime
+                    .sendMessage({
+                        action: "form_interaction",
+                        payload: fieldInfo,
+                    })
+                    .then((response) => {
+                        console.log("Response from background script:", response);
+                    });
             }
         };
 
