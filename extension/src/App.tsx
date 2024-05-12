@@ -13,10 +13,6 @@ function App() {
         };
     }, []);
 
-    // const onClickHandler = () => {
-    //     browser.runtime.sendMessage({ action: "pop" });
-    // };
-
     return <></>;
 }
 

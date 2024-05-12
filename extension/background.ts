@@ -25,43 +25,42 @@ type GlobalState = {
     showPopup: boolean;
 };
 
-type PayloadType = object |  string | number | boolean | null | undefined;
+type PayloadType = object | string | number | boolean | null | undefined;
 
 type MessageInterface = {
     action: string;
-    payload?:{
+    payload?: {
         [key: string]: PayloadType;
-    }
+    };
 };
-
 
 let globalState: GlobalState;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
-browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response:ResponseCallback) => {
-    response({ message: "success" });
-    if (msg.action === "mount") {
-        const url = new URL((msg.payload!.url! as string));
-        const urlParts = url.hostname.split("/");
-        if (globalState && globalState.url === urlParts[0]) {
-            sender.tab?.id &&
-                browser.tabs.sendMessage(sender.tab.id, { action: "mount", payload: { globalState } }).then((response) => {
-                    console.log("response", response);
-                });
+browser.runtime.onMessage.addListener(
+    (msg: MessageInterface, sender, response: ResponseCallback) => {
+        response({ message: "success" });
+        if (msg.action === "mount") {
+            const url = new URL(msg.payload!.url! as string);
+            const urlParts = url.hostname.split("/");
+            if (globalState && globalState.url === urlParts[0]) {
+                sender.tab?.id &&
+                    browser.tabs
+                        .sendMessage(sender.tab.id, { action: "mount", payload: { globalState } })
+                        .then((response) => {
+                            console.log("response", response);
+                        });
+            }
         }
-    }
-    if (msg.action === "login") {
-        const url = new URL((msg.payload?.url as string));
-        const urlParts = url.hostname.split("/");
-        console.log("domain", urlParts[0]);
-        globalState = {
-            url: urlParts[0],
-            showPopup: true,
-        };
-    }
+        if (msg.action === "login") {
+            const url = new URL(msg.payload?.url as string);
+            const urlParts = url.hostname.split("/");
+            console.log("domain", urlParts[0]);
+            globalState = {
+                url: urlParts[0],
+                showPopup: true,
+            };
+        }
 
-    return true;
-});
-
-
+        return true;
+    },
+);

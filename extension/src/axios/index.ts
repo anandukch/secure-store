@@ -23,7 +23,7 @@ api.interceptors.request.use(
     },
     (error: AxiosError) => {
         return Promise.reject(error);
-    }
+    },
 );
 
 // let refresh = false;
@@ -46,7 +46,7 @@ api.interceptors.response.use(
         }
 
         return Promise.reject(error);
-    }
+    },
 );
 
 // export const apiUserData = () => api.get("/users/me", { withCredentials: true });

@@ -1,5 +1,5 @@
-import browser from "webextension-polyfill";
 import React, { useEffect } from "react";
+import browser from "webextension-polyfill";
 import Confirmation from "./components/Confirmation";
 
 function App() {
@@ -70,8 +70,8 @@ function App() {
                 }
             });
         }
-
-        const handleUserInteraction = (event) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const handleUserInteraction = (event: any) => {
             const fieldInfo = {
                 type: event.target.tagName,
                 value: event.target.value,

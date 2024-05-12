@@ -5,12 +5,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ext": "cd extension && npm run build:chrome",
-    "dev:ext" : "cd extension && npm run dev:chrome",
+    "dev:ext": "cd extension && npm run dev:chrome",
     "dev:server": "air",
     "build:server": "go build -o dist/main src/main.go",
     "build:server:linux": "GOOS=linux GOARCH=amd64 go build -o dist/main-linux src/main.go",
-    "start:server": "go run src/main.go"
+    "start:server": "go run src/main.go",
+    "prepare": "husky install"
   },
   "author": "Anandu",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^8.0.0"
+  }
 }
