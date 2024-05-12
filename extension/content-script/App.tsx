@@ -25,7 +25,7 @@ function App() {
         suggestionDiv.innerText = "Suggestion";
         field.parentNode?.appendChild(suggestionDiv);
     };
-    
+
     useEffect(() => {
         console.log("App mounted");
         browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
