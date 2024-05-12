@@ -12,7 +12,7 @@
         "build:server:linux": "GOOS=linux GOARCH=amd64 go build -o dist/main-linux src/main.go",
         "start:server": "go run src/main.go",
         "lint:ext": "cd extension && npm run lint",
-        "pre-commit": "npm run prettier && npm run lint:ext",
+        "pre-commit": "npm run lint:ext",
         "prepare": "husky install"
     },
     "author": "Anandu",
