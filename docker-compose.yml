@@ -1,13 +1,12 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  go-server:
-    build: .
-    env_file:
-      - .env
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/usr/src/app
-    command: air 
-  
+    go-server:
+        build: .
+        env_file:
+            - .env
+        ports:
+            - "3000:3000"
+        volumes:
+            - .:/usr/src/app
+        command: air

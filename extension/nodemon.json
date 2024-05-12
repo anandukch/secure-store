@@ -1,6 +1,6 @@
 {
     "watch": ["./*", "src/**/*"],
-    "ext": "ts,tsx",      
-    "ignore": ["src/**/*.spec.ts"], 
-    "exec": "npm run build:chrome" 
-  }
+    "ext": "ts,tsx",
+    "ignore": ["src/**/*.spec.ts"],
+    "exec": "npm run build:chrome"
+}

@@ -1,20 +1,24 @@
 {
-  "name": "secure-store",
-  "version": "1.0.0",
-  "description": "A safe store",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ext": "cd extension && npm run build:chrome",
-    "dev:ext": "cd extension && npm run dev:chrome",
-    "dev:server": "air",
-    "build:server": "go build -o dist/main src/main.go",
-    "build:server:linux": "GOOS=linux GOARCH=amd64 go build -o dist/main-linux src/main.go",
-    "start:server": "go run src/main.go",
-    "prepare": "husky install"
-  },
-  "author": "Anandu",
-  "license": "ISC",
-  "devDependencies": {
-    "husky": "^8.0.0"
-  }
+    "name": "secure-store",
+    "version": "1.0.0",
+    "description": "A safe store",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "prettier": "prettier --write .",
+        "build:ext": "cd extension && npm run build:chrome",
+        "dev:ext": "cd extension && npm run dev:chrome",
+        "dev:server": "air",
+        "build:server": "go build -o dist/main src/main.go",
+        "build:server:linux": "GOOS=linux GOARCH=amd64 go build -o dist/main-linux src/main.go",
+        "start:server": "go run src/main.go",
+        "lint:ext": "cd extension && npm run lint",
+        "pre-commit": "npm run prettier && npm run lint:ext",
+        "prepare": "husky install"
+    },
+    "author": "Anandu",
+    "license": "ISC",
+    "devDependencies": {
+        "husky": "^8.0.0",
+        "prettier": "^3.2.5"
+    }
 }

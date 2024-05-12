@@ -36,31 +36,34 @@ type MessageInterface = {
 
 let globalState: GlobalState;
 
-browser.runtime.onMessage.addListener(
-    (msg: MessageInterface, sender, response: ResponseCallback) => {
-        response({ message: "success" });
-        if (msg.action === "mount") {
-            const url = new URL(msg.payload!.url! as string);
-            const urlParts = url.hostname.split("/");
-            if (globalState && globalState.url === urlParts[0]) {
-                sender.tab?.id &&
-                    browser.tabs
-                        .sendMessage(sender.tab.id, { action: "mount", payload: { globalState } })
-                        .then((response) => {
-                            console.log("response", response);
-                        });
-            }
-        }
-        if (msg.action === "login") {
-            const url = new URL(msg.payload?.url as string);
-            const urlParts = url.hostname.split("/");
-            console.log("domain", urlParts[0]);
-            globalState = {
-                url: urlParts[0],
-                showPopup: true,
-            };
-        }
+browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: ResponseCallback) => {
+    response({ message: "success" });
+    if (msg.action === "mount") {
+        console.log("mount", msg.payload!.url!);
 
-        return true;
-    },
-);
+        const url = new URL(msg.payload!.url! as string);
+        const urlParts = url.hostname.split("/");
+        console.log("login", globalState);
+
+        if (globalState && globalState.url === urlParts[0]) {
+            sender.tab?.id &&
+                browser.tabs.sendMessage(sender.tab.id, { action: "mount", payload: { globalState } }).then((response) => {
+                    console.log("response", response);
+                });
+        }
+    }
+    if (msg.action === "login") {
+        console.log("login", msg);
+
+        const url = new URL(msg.payload?.url as string);
+        const urlParts = url.hostname.split("/");
+        console.log("domain", urlParts[0]);
+        globalState = {
+            url: urlParts[0],
+            showPopup: true,
+        };
+        console.log("login", globalState);
+    }
+
+    return true;
+});

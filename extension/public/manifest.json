@@ -5,13 +5,7 @@
     "action": {
         "default_popup": "index.html"
     },
-    "permissions": [
-        "scripting",
-        "storage",
-        "activeTab",
-        "tabs",
-        "webNavigation"
-    ],
+    "permissions": ["scripting", "storage", "activeTab", "tabs", "webNavigation"],
     "host_permissions": ["<all_urls>"],
     "content_scripts": [
         {

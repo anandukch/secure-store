@@ -5,6 +5,7 @@ import Confirmation from "./components/Confirmation";
 function App() {
     const [showConfirmation, setShowConfirmation] = React.useState(false);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const createSuggestionBox = (field: HTMLInputElement) => {
         const suggestionDiv = document.createElement("div");
         suggestionDiv.style.width = `${field.offsetWidth}px`;
@@ -35,8 +36,10 @@ function App() {
             },
         });
         browser.runtime.onMessage.addListener((msg) => {
+            console.log("mount", msg);
             if (msg.action === "mount") {
                 if (msg.payload.globalState && msg.payload.globalState.showPopup) {
+                    console.log("Show confirmation");
                     setShowConfirmation(true);
                 }
             }
@@ -78,10 +81,9 @@ function App() {
                 action: event.type,
             };
 
-            if (
-                (fieldInfo.type === "BUTTON" || fieldInfo.value === "Login") &&
-                fieldInfo.action === "click"
-            ) {
+            if ((fieldInfo.type === "BUTTON" || fieldInfo.value === "Login") && fieldInfo.action === "click") {
+                console.log("Login button clicked", fieldInfo);
+
                 setShowConfirmation(true);
 
                 browser.runtime.sendMessage({
@@ -116,11 +118,11 @@ function App() {
             }
         };
 
-        // document.addEventListener("keydown", handleUserInteraction);
-        // document.addEventListener("keyup", handleUserInteraction);
-        // document.addEventListener("click", handleUserInteraction);
-        // document.addEventListener("focus", handleUserInteraction);
-        // document.addEventListener("change", handleUserInteraction);
+        document.addEventListener("keydown", handleUserInteraction);
+        document.addEventListener("keyup", handleUserInteraction);
+        document.addEventListener("click", handleUserInteraction);
+        document.addEventListener("focus", handleUserInteraction);
+        document.addEventListener("change", handleUserInteraction);
 
         return () => {
             console.log("App unmounted");
