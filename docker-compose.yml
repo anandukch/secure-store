@@ -2,11 +2,10 @@ version: "3.8"
 
 services:
     go-server:
-        build: .
-        env_file:
-            - .env
+        build: 
+            context: ./backend
+            dockerfile: Dockerfile
         ports:
-            - "3000:3000"
+            - "5000:5000"
         volumes:
-            - .:/usr/src/app
-        command: air
+            - ./backend:/usr/src/app
