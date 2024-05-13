@@ -19,11 +19,11 @@ jobs:
         with:
           node-version: 14
 
-      # - name: Install node dependencies
-      #   run: cd extension && npm install
+      - name: Install node dependencies
+        run: cd extension && npm install
       
-      # - name: Install go dependencies
-      #   run: cd backend && go mod download
+      - name: Install go dependencies
+        run: cd backend && go mod download
 
       # - name: Lint Code
       #   run: npm run lint:backend
