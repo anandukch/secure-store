@@ -10,7 +10,6 @@ RUN go install github.com/cosmtrek/air@latest
 
 COPY . .
 
-
 # RUN rm -rf extension/ frontend/
 
 # RUN go mod tidy
