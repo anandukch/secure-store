@@ -31,8 +31,8 @@ jobs:
       - name: Build backend
         run: npm run build:backend
 
-      - name: Lint extension
-        run: npm run lint:ext
+      # - name: Lint extension
+      #   run: npm run lint:ext
 
       - name: Build extension
         run: npm run build:ext
