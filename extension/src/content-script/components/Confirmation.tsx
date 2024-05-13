@@ -1,4 +1,8 @@
-function Confirmation() {
+type Props = {
+    handleConfirm: () => void;
+};
+
+function Confirmation({ handleConfirm }: Props) {
     return (
         <div
             style={{
@@ -27,6 +31,7 @@ function Confirmation() {
                         cursor: "pointer",
                         color: "red",
                     }}
+                    onClick={handleConfirm}
                 >
                     X
                 </span>

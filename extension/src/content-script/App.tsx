@@ -74,7 +74,6 @@ function App() {
             });
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const handleUserInteraction = (event: any) => {
             const fieldInfo = {
                 type: event.target.tagName,
@@ -129,7 +128,7 @@ function App() {
             console.log("App unmounted");
         };
     }, []);
-    return <>{showConfirmation && <Confirmation />}</>;
+    return <>{showConfirmation && <Confirmation handleConfirm={() => setShowConfirmation(false)} />}</>;
 }
 
 export default App;

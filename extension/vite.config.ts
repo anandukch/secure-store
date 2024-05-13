@@ -10,7 +10,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 index: new URL("./index.html", import.meta.url).pathname,
-                background: new URL("./background.html", import.meta.url).pathname,
+                background: new URL("./src/service-worker/background.html", import.meta.url).pathname,
             },
         },
     },

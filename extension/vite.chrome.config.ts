@@ -19,8 +19,8 @@ export default defineConfig({
         outDir: resolve(__dirname, "dist"),
         lib: {
             formats: ["iife"],
-            entry: resolve(__dirname, "./background.ts"),
-            name: "Cat Facts",
+            entry: resolve(__dirname, "/src/service-worker/background.ts"),
+            name: "service worker",
         },
         rollupOptions: {
             output: {
