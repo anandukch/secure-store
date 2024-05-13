@@ -5,9 +5,9 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 )
+
 var (
-    // Secret key to sign the JWT
-    secretKey = []byte("your-secret-key")
+	secretKey = []byte("your-secret-key")
 )
 
 func GenerateJwtToken(userId string, email string) (string, error) {

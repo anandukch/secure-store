@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-and-build:
+    name: Lint and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install node dependencies
+        run: cd extension && npm install
+      
+      - name: Install go dependencies
+        run: cd backend && go mod download
+
+      # - name: Lint Code
+      #   run: npm run lint:backend
+
+      - name: Build backend
+        run: npm run build:backend
+
+      - name: Lint extension
+        run: npm run lint:ext
+
+      - name: Build extension
+        run: npm run build:ext
