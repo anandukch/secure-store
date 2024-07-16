@@ -1,3 +1,4 @@
 vite.content.config.ts
 vite.config.ts
 vite.chrome.ts
+node_modules
