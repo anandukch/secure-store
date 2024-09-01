@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"pass-saver/src/models"
 	 "pass-saver/src/response"
-
-
 	"github.com/gofiber/fiber/v2"
 )
 

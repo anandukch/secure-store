@@ -2,17 +2,17 @@ package controllers
 
 import (
 	"context"
-	"net/http"
-	"pass-saver/src/config"
-	"pass-saver/src/handler"
-	"pass-saver/src/models"
-	"pass-saver/src/response"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
+	"net/http"
+	"pass-saver/src/config"
+	"pass-saver/src/handler"
+	"pass-saver/src/models"
+	"pass-saver/src/response"
 
 	"pass-saver/src/schemas"
 	"time"
@@ -51,9 +51,9 @@ func CreateUser(c *fiber.Ctx) error {
 		})
 	}
 	newUser := models.User{
-		Id:   primitive.NewObjectID(),
-		Name: user.Name,
-		Email: user.Email,
+		Id:       primitive.NewObjectID(),
+		Name:     user.Name,
+		Email:    user.Email,
 		Password: string(encrypted_password),
 	}
 
@@ -94,7 +94,7 @@ func SignIn(c *fiber.Ctx) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
 		return response.BaseResponse(c, http.StatusBadRequest, "Invalid request", "Invalid password")
 	}
-	token, err :=handler.GenerateJwtToken(user.Id.Hex(), user.Email)
+	token, err := handler.GenerateJwtToken(user.Id.Hex(), user.Email)
 	if err != nil {
 		return response.BaseResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
@@ -103,7 +103,4 @@ func SignIn(c *fiber.Ctx) error {
 		"token": token,
 	})
 
-
 }
-
-
