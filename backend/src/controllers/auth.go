@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"net/http"
-	"pass-saver/src/config"
 	"pass-saver/src/handler"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
@@ -11,14 +10,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 
 	"pass-saver/src/schemas"
 	"time"
 )
 
-var userCollection *mongo.Collection = config.GetCollection("users")
 
 var validate = validator.New()
 
