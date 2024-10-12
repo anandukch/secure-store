@@ -3,16 +3,13 @@ package controllers
 import (
 	"context"
 	"net/http"
-	"pass-saver/src/config"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
 	"time"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var vaultCollection *mongo.Collection = config.GetCollection("vault")
 
 func GetVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
