@@ -12,4 +12,4 @@ var AuthMiddleWare = middlewares.AuthMiddleWare
 var CreateUser = controllers.CreateUser
 var SignIn = controllers.SignIn
 var GetUserProfile = controllers.GetUserProfile
-var GetUserById = controllers.GetUserById
+// var GetUserById = controllers.

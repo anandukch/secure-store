@@ -2,17 +2,12 @@ package controllers
 
 import (
 	"context"
-	"net/http"
-	"pass-saver/src/handler"
-	"pass-saver/src/models"
-	"pass-saver/src/response"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"pass-saver/src/config"
 	"pass-saver/src/handler"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
@@ -20,7 +15,6 @@ import (
 	"pass-saver/src/schemas"
 	"time"
 )
-
 
 var validate = validator.New()
 

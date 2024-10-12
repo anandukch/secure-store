@@ -9,3 +9,4 @@ type User struct {
 	Password string             `json:"password" bson:"password"`
 	Type     string             `json:"type" bson:"type"`
 }
+
