@@ -16,7 +16,7 @@ func UserRoutes(app fiber.Router) {
 	userController := controllers.UserController{
 		UserRepo: userRepo,
 	}
-	router.Get("/", AuthMiddleWare, userController.GetUserProfile)
+	router.Get("/profile", userController.GetUserProfile)
 	router.Get("/", userController.GetAllUsers)
 	router.Get("/:id", userController.GetUserById)
 	router.Post("/", userController.CreateUser)

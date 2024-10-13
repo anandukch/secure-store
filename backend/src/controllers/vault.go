@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
-	"time"
+	"time" 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -20,10 +20,10 @@ func GetVault(c *fiber.Ctx) error {
 	err := vaultCollection.FindOne(ctx, bson.M{"userId": user.Id}).Decode(&userVault)
 
 	if err != nil {
-		return response.Response(c, http.StatusNotFound, "error", "Vault not found")
+		return response.JSONResponse(c, http.StatusNotFound, "error", "Vault not found")
 	}
 
-	return response.Response(c, http.StatusOK, "success", userVault.Data)
+	return response.JSONResponse(c, http.StatusOK, "success", userVault.Data)
 }
 
 func AddToVault(c *fiber.Ctx) error {
@@ -40,7 +40,7 @@ func AddToVault(c *fiber.Ctx) error {
 	}
 
 	if validationErr := validate.Struct(&vault); validationErr != nil {
-		return response.Response(c, http.StatusBadRequest, "error", validationErr.Error())
+		return response.JSONResponse(c, http.StatusBadRequest, "error", validationErr.Error())
 	}
 
 	var userVault models.User
@@ -55,20 +55,20 @@ func AddToVault(c *fiber.Ctx) error {
 		_, err = vaultCollection.InsertOne(ctx, newVault)
 
 		if err != nil {
-			return response.Response(c, http.StatusInternalServerError, "error", err.Error())
+			return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 		}
 
-		return response.Response(c, http.StatusOK, "success", "Vault created successfully")
+		return response.JSONResponse(c, http.StatusOK, "success", "Vault created successfully")
 
 	}
 
 	_, err = vaultCollection.UpdateOne(ctx, bson.M{"userId": user.Id}, bson.M{"$push": bson.M{"data": vault}})
 
 	if err != nil {
-		return response.Response(c, http.StatusInternalServerError, "error", err.Error())
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
 
-	return response.Response(c, http.StatusOK, "success", "Vault updated successfully")
+	return response.JSONResponse(c, http.StatusOK, "success", "Vault updated successfully")
 
 }
 

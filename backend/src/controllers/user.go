@@ -29,24 +29,24 @@ func (uc *UserController) GetUserById(c *fiber.Ctx) error {
 
 	user, err := uc.UserRepo.GetUserById(c, id)
 	if err != nil {
-		return response.BaseResponse(c, http.StatusNotFound, "error", nil)
+		return response.JSONResponse(c, http.StatusNotFound, "error", nil)
 	}
 
-	return response.BaseResponse(c, http.StatusOK, "success", response.FilteredResponse(*user))
+	return response.JSONResponse(c, http.StatusOK, "success", response.FilteredResponse(*user))
 }
 
 func (uc *UserController) CreateUser(c *fiber.Ctx) error {
 	var user models.User
 
 	if err := c.BodyParser(&user); err != nil {
-		return response.BaseResponse(c, http.StatusBadRequest, "error", nil)
+		return response.JSONResponse(c, http.StatusBadRequest, "error", nil)
 	}
 
 	if _, err := uc.UserRepo.CreateUser(c, user); err != nil {
-		return response.BaseResponse(c, http.StatusInternalServerError, "error", nil)
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
 	}
 
-	return response.BaseResponse(c, http.StatusCreated, "success", map[string]string{
+	return response.JSONResponse(c, http.StatusCreated, "success", map[string]string{
 		"message": "User created successfully",
 	})
 }
@@ -54,9 +54,9 @@ func (uc *UserController) CreateUser(c *fiber.Ctx) error {
 func (uc *UserController) GetAllUsers(c *fiber.Ctx) error {
 	users, err := uc.UserRepo.GetAllUsers(c)
 	if err != nil {
-		return response.BaseResponse(c, http.StatusInternalServerError, "error", nil)
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
 	}
 
-	return response.BaseResponse(c, http.StatusOK, "success", users)
+	return response.JSONResponse(c, http.StatusOK, "success", users)
 
 }

@@ -73,29 +73,29 @@ func SignIn(c *fiber.Ctx) error {
 	var request schemas.AuthRequest
 
 	if err := c.BodyParser(&request); err != nil {
-		return response.Response(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
 	if request.Email == "" || request.Password == "" {
-		return response.BaseResponse(c, http.StatusBadRequest, "Invalid request", "Email and password are required")
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Email and password are required")
 	}
 
 	var user models.User
 	if err := userCollection.FindOne(context.Background(), bson.M{"email": request.Email}).Decode(&user); err != nil {
-		return response.BaseResponse(c, http.StatusBadRequest, "Invalid request", "Invalid email")
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid email")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
-		return response.BaseResponse(c, http.StatusBadRequest, "Invalid request", "Invalid password")
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid password")
 	}
 	token, err := handler.GenerateJwtToken(user.Id.Hex(), user.Email)
 	if err != nil {
-		return response.BaseResponse(c, http.StatusInternalServerError, "error", err.Error())
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
 
-	return response.Response(c, http.StatusOK, "User logged in", &fiber.Map{
+	return response.JSONResponse(c, http.StatusOK, "User logged in", &fiber.Map{
 		"token": token,
 	})
 

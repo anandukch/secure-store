@@ -40,7 +40,7 @@ func AuthMiddleWare(c *fiber.Ctx) error {
 	var user models.User
 	objId, _ := primitive.ObjectIDFromHex(claims["id"].(string)) // Perform type assertion
 	if err := userCollection.FindOne(context.Background(), bson.M{"_id": objId}).Decode(&user); err != nil {
-		return response.BaseResponse(c, http.StatusBadRequest, "Invalid request", "Invalid credentials")
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid credentials")
 	}
 	c.Locals("user", user)
 	return c.Next()
