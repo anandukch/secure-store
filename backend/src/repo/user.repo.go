@@ -5,14 +5,15 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type UserRepository struct{
+type UserRepository struct {
 	Model *mongo.Collection
 }
 
-func (r *UserRepository) GetUserById(c *fiber.Ctx, id string) (*models.User, error) {
+func (r *UserRepository) GetUserById(c *fiber.Ctx, id primitive.ObjectID) (*models.User, error) {
 	var user models.User
 
 	if err := r.Model.FindOne(c.Context(), bson.M{"_id": id}).Decode(&user); err != nil {
@@ -64,3 +65,5 @@ func (u *UserRepository) GetAllUsers(c *fiber.Ctx) ([]models.User, error) {
 
 	return users, nil
 }
+
+

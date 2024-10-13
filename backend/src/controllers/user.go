@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"pass-saver/src/common"
 	"pass-saver/src/models"
 	"pass-saver/src/repo"
 	"pass-saver/src/response"
@@ -16,20 +17,19 @@ type UserController struct {
 func (uc *UserController) GetUserProfile(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 
-	return c.JSON(response.UserResponse{
-		Status:  http.StatusOK,
-		Message: "success",
-		Data:    response.FilteredResponse(user),
-	})
+	return response.JSONResponse(c, http.StatusOK, "success", response.FilteredResponse(user))
 }
 
 func (uc *UserController) GetUserById(c *fiber.Ctx) error {
-	id := c.Params("id")
+	id, idErr := common.ToObjectID(c.Params("id"))
+	if idErr != nil {
+		return response.JSONResponse(c, http.StatusBadRequest, "error", idErr.Error())
+	}
 	var user *models.User
 
 	user, err := uc.UserRepo.GetUserById(c, id)
 	if err != nil {
-		return response.JSONResponse(c, http.StatusNotFound, "error", nil)
+		return response.JSONResponse(c, http.StatusNotFound, "error", err.Error())
 	}
 
 	return response.JSONResponse(c, http.StatusOK, "success", response.FilteredResponse(*user))
@@ -46,7 +46,7 @@ func (uc *UserController) CreateUser(c *fiber.Ctx) error {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
 	}
 
-	return response.JSONResponse(c, http.StatusCreated, "success", map[string]string{
+	return response.JSONResponse(c, http.StatusCreated, "success", fiber.Map{
 		"message": "User created successfully",
 	})
 }

@@ -24,27 +24,19 @@ func CreateUser(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := c.BodyParser(&user); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(response.UserResponse{
-			Status:  http.StatusBadRequest,
-			Message: "Invalid request",
-			Data:    &fiber.Map{"data": err.Error()},
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+			"error": err.Error(),
 		})
 	}
 
 	if validationErr := validate.Struct(&user); validationErr != nil {
-		return c.Status(http.StatusBadRequest).JSON(response.UserResponse{
-			Status:  http.StatusBadRequest,
-			Message: "error",
-			Data:    &fiber.Map{"data": validationErr.Error()},
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+			"error": validationErr.Error(),
 		})
 	}
 	encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(response.UserResponse{
-			Status:  http.StatusInternalServerError,
-			Message: "error",
-			Data:    &fiber.Map{"data": err.Error()},
-		})
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
 	newUser := models.User{
 		Id:       primitive.NewObjectID(),
@@ -55,18 +47,10 @@ func CreateUser(c *fiber.Ctx) error {
 
 	result, err := userCollection.InsertOne(ctx, newUser)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(response.UserResponse{
-			Status:  http.StatusInternalServerError,
-			Message: "error",
-			Data:    &fiber.Map{"data": err.Error()},
-		})
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
 
-	return c.Status(http.StatusCreated).JSON(response.UserResponse{
-		Status:  http.StatusCreated,
-		Message: "User created successfully",
-		Data:    &fiber.Map{"data": result},
-	})
+	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
 }
 
 func SignIn(c *fiber.Ctx) error {
