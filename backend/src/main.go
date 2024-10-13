@@ -30,7 +30,7 @@ func main() {
 	api := app.Group("/api")
 	routes.AuthRoutes(api)
 	routes.UserRoutes(api)
-	routes.CredentialsRoutes(api)
+	routes.VaultRoutes(api)
 
 	app.Listen(":5000")
 }

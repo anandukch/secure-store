@@ -9,7 +9,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetUserProfile(c *fiber.Ctx) error {
+type UserController struct {
+	UserRepo *repo.UserRepository
+}
+
+func (uc *UserController) GetUserProfile(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 
 	return c.JSON(response.UserResponse{
@@ -19,24 +23,11 @@ func GetUserProfile(c *fiber.Ctx) error {
 	})
 }
 
-// func GetUserById(c *fiber.Ctx) error {
-// 	id := c.Params("id")
-// 	var user models.User
-
-// 	if err := repo.UserRepoInterface.GetUserById();
-
-// 	return response.BaseResponse(c, http.StatusOK, "success", response.FilteredResponse(user))
-// }
-
-type UserController struct {
-	UserRepo repo.UserRepo
-}
-
 func (uc *UserController) GetUserById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var user *models.User
 
-	user, err :=uc.UserRepo.GetUserById(c, id)
+	user, err := uc.UserRepo.GetUserById(c, id)
 	if err != nil {
 		return response.BaseResponse(c, http.StatusNotFound, "error", nil)
 	}
@@ -67,5 +58,5 @@ func (uc *UserController) GetAllUsers(c *fiber.Ctx) error {
 	}
 
 	return response.BaseResponse(c, http.StatusOK, "success", users)
-	
+
 }

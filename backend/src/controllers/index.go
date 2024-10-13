@@ -12,7 +12,4 @@ var userCollection *mongo.Collection = config.GetCollection(USERS)
 var vaultCollection *mongo.Collection = config.GetCollection(VAULT)
 
 
-type BaseController struct{
-	
-}
 

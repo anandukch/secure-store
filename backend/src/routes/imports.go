@@ -11,5 +11,6 @@ var AuthMiddleWare = middlewares.AuthMiddleWare
 //controllers
 var CreateUser = controllers.CreateUser
 var SignIn = controllers.SignIn
-var GetUserProfile = controllers.GetUserProfile
-// var GetUserById = controllers.
+
+const USERS = "users"
+const VAULT = "vault"

@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CredentialsRoutes(app fiber.Router) {
+func VaultRoutes(app fiber.Router) {
 	router := app.Group("/vault")
 	router.Get("/", middlewares.AuthMiddleWare, controllers.GetVault)
 	router.Post("/",middlewares.AuthMiddleWare,controllers.AddToVault)

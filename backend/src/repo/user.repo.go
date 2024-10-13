@@ -8,36 +8,32 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type UserRepo interface {
-	GetUserById(c *fiber.Ctx, id string) (*models.User, error)
-	CreateUser(c *fiber.Ctx, user models.User) (*mongo.InsertOneResult, error)
-	GetUserByEmail(c *fiber.Ctx, email string) (*models.User, error)
-	UpdateUser(c *fiber.Ctx, id string, user models.User) (*mongo.UpdateResult, error)
-	GetAllUsers(c *fiber.Ctx) ([]models.User, error)
+type UserRepository struct{
+	Model *mongo.Collection
 }
 
-func (u *RepoConfig) GetUserById(c *fiber.Ctx, id string) (*models.User, error) {
+func (r *UserRepository) GetUserById(c *fiber.Ctx, id string) (*models.User, error) {
 	var user models.User
 
-	if err := u.collection.FindOne(c.Context(), bson.M{"_id": id}).Decode(&user); err != nil {
+	if err := r.Model.FindOne(c.Context(), bson.M{"_id": id}).Decode(&user); err != nil {
 		return nil, err
 	}
 
 	return &user, nil
 }
 
-func (u *RepoConfig) GetUserByEmail(c *fiber.Ctx, email string) (*models.User, error) {
+func (r *UserRepository) GetUserByEmail(c *fiber.Ctx, email string) (*models.User, error) {
 	var user models.User
 
-	if err := u.collection.FindOne(c.Context(), bson.M{"email": email}).Decode(&user); err != nil {
+	if err := r.Model.FindOne(c.Context(), bson.M{"email": email}).Decode(&user); err != nil {
 		return nil, err
 	}
 
 	return &user, nil
 }
 
-func (u *RepoConfig) CreateUser(c *fiber.Ctx, user models.User) (*mongo.InsertOneResult, error) {
-	result, err := u.collection.InsertOne(c.Context(), user)
+func (u *UserRepository) CreateUser(c *fiber.Ctx, user models.User) (*mongo.InsertOneResult, error) {
+	result, err := u.Model.InsertOne(c.Context(), user)
 	if err != nil {
 		return nil, err
 	}
@@ -45,8 +41,8 @@ func (u *RepoConfig) CreateUser(c *fiber.Ctx, user models.User) (*mongo.InsertOn
 	return result, nil
 }
 
-func (u *RepoConfig) UpdateUser(c *fiber.Ctx, id string, user models.User) (*mongo.UpdateResult, error) {
-	result, err := u.collection.UpdateOne(c.Context(), bson.M{"_id": id}, bson.M{"$set": user})
+func (u *UserRepository) UpdateUser(c *fiber.Ctx, id string, user models.User) (*mongo.UpdateResult, error) {
+	result, err := u.Model.UpdateOne(c.Context(), bson.M{"_id": id}, bson.M{"$set": user})
 	if err != nil {
 		return nil, err
 	}
@@ -54,10 +50,10 @@ func (u *RepoConfig) UpdateUser(c *fiber.Ctx, id string, user models.User) (*mon
 	return result, nil
 }
 
-func (u *RepoConfig) GetAllUsers(c *fiber.Ctx) ([]models.User, error) {
+func (u *UserRepository) GetAllUsers(c *fiber.Ctx) ([]models.User, error) {
 	var users []models.User
 
-	cursor, err := u.collection.Find(c.Context(), bson.M{})
+	cursor, err := u.Model.Find(c.Context(), bson.M{})
 	if err != nil {
 		return nil, err
 	}

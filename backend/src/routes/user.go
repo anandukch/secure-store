@@ -10,11 +10,14 @@ import (
 
 func UserRoutes(app fiber.Router) {
 	router := app.Group("/user")
-	uc := &controllers.UserController{
-		UserRepo: repo.CreateRepo(config.GetCollection("users")),
+	userRepo := &repo.UserRepository{
+		Model: config.GetCollection(USERS),
 	}
-	// router.Get("/", AuthMiddleWare, GetUserProfile)
-	router.Get("/", uc.GetAllUsers)
-	router.Get("/:id", uc.GetUserById)
-	router.Post("/", uc.CreateUser)
+	userController := controllers.UserController{
+		UserRepo: userRepo,
+	}
+	router.Get("/", AuthMiddleWare, userController.GetUserProfile)
+	router.Get("/", userController.GetAllUsers)
+	router.Get("/:id", userController.GetUserById)
+	router.Post("/", userController.CreateUser)
 }
