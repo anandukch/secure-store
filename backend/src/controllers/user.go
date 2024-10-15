@@ -6,8 +6,11 @@ import (
 	"pass-saver/src/models"
 	"pass-saver/src/repo"
 	"pass-saver/src/response"
+	"pass-saver/src/schemas"
 
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserController struct {
@@ -35,20 +38,39 @@ func (uc *UserController) GetUserById(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", response.FilteredResponse(*user))
 }
 
-func (uc *UserController) CreateUser(c *fiber.Ctx) error {
-	var user models.User
+func (ac *UserController) CreateUser(c *fiber.Ctx) error {
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var user schemas.CreateUser
+	// defer cancel()
 
 	if err := c.BodyParser(&user); err != nil {
-		return response.JSONResponse(c, http.StatusBadRequest, "error", nil)
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	if _, err := uc.UserRepo.CreateUser(c, user); err != nil {
-		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
+	if validationErr := validate.Struct(&user); validationErr != nil {
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+			"error": validationErr.Error(),
+		})
+	}
+	encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
+	}
+	newUser := models.User{
+		Id:       primitive.NewObjectID(),
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: string(encrypted_password),
 	}
 
-	return response.JSONResponse(c, http.StatusCreated, "success", fiber.Map{
-		"message": "User created successfully",
-	})
+	result, err := ac.UserRepo.CreateUser(c, newUser)
+	if err != nil {
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
+	}
+
+	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
 }
 
 func (uc *UserController) GetAllUsers(c *fiber.Ctx) error {

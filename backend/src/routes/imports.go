@@ -9,7 +9,7 @@ import (
 var AuthMiddleWare = middlewares.AuthMiddleWare
 
 //controllers
-var CreateUser = controllers.CreateUser
+// var CreateUser = controllers.CreateUser
 var SignIn = controllers.SignIn
 
 const USERS = "users"

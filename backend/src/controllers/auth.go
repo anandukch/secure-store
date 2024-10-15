@@ -2,26 +2,30 @@ package controllers
 
 import (
 	"context"
+	"net/http"
+	"pass-saver/src/handler"
+	"pass-saver/src/models"
+	"pass-saver/src/repo"
+	"pass-saver/src/response"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"pass-saver/src/handler"
-	"pass-saver/src/models"
-	"pass-saver/src/response"
 
 	"pass-saver/src/schemas"
-	"time"
 )
 
+type AuthController struct {
+	UserRepo *repo.UserRepository
+}
 var validate = validator.New()
 
-func CreateUser(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var user schemas.UserRequest
-	defer cancel()
+func (ac *AuthController) CreateUser(c *fiber.Ctx) error {
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var user schemas.CreateUser
+	// defer cancel()
 
 	if err := c.BodyParser(&user); err != nil {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
@@ -45,7 +49,7 @@ func CreateUser(c *fiber.Ctx) error {
 		Password: string(encrypted_password),
 	}
 
-	result, err := userCollection.InsertOne(ctx, newUser)
+	result, err := ac.UserRepo.CreateUser(c, newUser)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}

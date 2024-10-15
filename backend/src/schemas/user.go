@@ -9,7 +9,7 @@ type AuthResponse struct {
 	Token string `json:"token"`
 }
 
-type UserRequest struct {
+type CreateUser struct {
 	Name     string `json:"name" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6"`
