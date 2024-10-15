@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {
@@ -23,6 +24,12 @@ func main() {
 		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
 		AllowHeaders:     "Content-Type,Authorization",
 	}))
+	app.Use(logger.New(logger.Config{
+		Format:     "${time} - ${ip} - ${method} ${path} ${status} - ${latency}\n",
+		TimeFormat: "02-Jan-2006",
+		TimeZone:   "Local",
+	}))
+
 	os.Setenv("FIBER_PREFORK", "1")
 	var DB *mongo.Client = config.ConnectDB()
 

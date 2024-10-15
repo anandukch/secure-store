@@ -2,7 +2,7 @@ module pass-saver
 
 go 1.22.2
 
-require github.com/gofiber/fiber/v2 v2.52.4
+require github.com/gofiber/fiber/v2 v2.52.5
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
