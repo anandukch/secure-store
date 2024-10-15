@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"pass-saver/src/common"
 	"pass-saver/src/models"
-	"pass-saver/src/repo"
 	"pass-saver/src/response"
 	"pass-saver/src/schemas"
+	"pass-saver/src/service"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,7 +14,7 @@ import (
 )
 
 type UserController struct {
-	UserRepo *repo.UserRepository
+	UserService *service.UserService
 }
 
 func (uc *UserController) GetUserProfile(c *fiber.Ctx) error {
@@ -30,7 +30,7 @@ func (uc *UserController) GetUserById(c *fiber.Ctx) error {
 	}
 	var user *models.User
 
-	user, err := uc.UserRepo.GetUserById(c, id)
+	user, err := uc.UserService.GetUserById(c.Context(), id)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusNotFound, "error", err.Error())
 	}
@@ -65,7 +65,7 @@ func (ac *UserController) CreateUser(c *fiber.Ctx) error {
 		Password: string(encrypted_password),
 	}
 
-	result, err := ac.UserRepo.CreateUser(c, newUser)
+	result, err := ac.UserService.CreateUser(c, newUser)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
@@ -74,7 +74,7 @@ func (ac *UserController) CreateUser(c *fiber.Ctx) error {
 }
 
 func (uc *UserController) GetAllUsers(c *fiber.Ctx) error {
-	users, err := uc.UserRepo.GetAllUsers(c)
+	users, err := uc.UserService.GetAllUsers(c)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
 	}

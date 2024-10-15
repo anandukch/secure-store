@@ -1,23 +1,24 @@
 package routes
 
 import (
-	"pass-saver/src/config"
 	"pass-saver/src/controllers"
-	"pass-saver/src/repo"
+	"pass-saver/src/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func UserRoutes(app fiber.Router) {
+type UserRoute struct {
+	UserController controllers.UserController
+}
+
+func UserRoutes(app fiber.Router, controller controllers.UserController,authMiddleware middlewares.AuthMiddleWare) {
 	router := app.Group("/user")
-	userRepo := &repo.UserRepository{
-		Model: config.GetCollection(USERS),
-	}
-	userController := controllers.UserController{
-		UserRepo: userRepo,
-	}
-	router.Get("/profile", AuthMiddleWare, userController.GetUserProfile)
-	router.Get("/", userController.GetAllUsers)
-	router.Get("/:id", userController.GetUserById)
-	router.Post("/", userController.CreateUser)
+	router.Use(func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "application/json")
+		return c.Next()
+	})
+	router.Get("/profile", authMiddleware.Middleware, controller.GetUserProfile)
+	router.Get("/", controller.GetAllUsers)
+	router.Get("/:id", controller.GetUserById)
+	router.Post("/", controller.CreateUser)
 }

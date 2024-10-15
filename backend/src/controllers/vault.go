@@ -5,19 +5,23 @@ import (
 	"net/http"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
-	"time" 
+	"pass-saver/src/service"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
+type VaultController struct {
+	VaultService *service.VaultService
+}
 
-func GetVault(c *fiber.Ctx) error {
+func (ctrl *VaultController) GetVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	var userVault models.Vault
-	err := vaultCollection.FindOne(ctx, bson.M{"userId": user.Id}).Decode(&userVault)
+	var userVault *models.Vault
+	userVault, err := ctrl.VaultService.GetByUserId(ctx, user.Id)
 
 	if err != nil {
 		return response.JSONResponse(c, http.StatusNotFound, "error", "Vault not found")
@@ -26,7 +30,7 @@ func GetVault(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", userVault.Data)
 }
 
-func AddToVault(c *fiber.Ctx) error {
+func (ctrl *VaultController) AddToVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var vault models.VaultData
@@ -43,16 +47,15 @@ func AddToVault(c *fiber.Ctx) error {
 		return response.JSONResponse(c, http.StatusBadRequest, "error", validationErr.Error())
 	}
 
-	var userVault models.User
-	err := vaultCollection.FindOne(ctx, bson.M{"userId": user.Id}).Decode(&userVault)
+	_, err := ctrl.VaultService.GetByUserId(ctx, user.Id)
 
 	if err != nil {
 		newVault := models.Vault{
 			UserId: user.Id,
 			Data:   []models.VaultData{vault},
 		}
-	
-		_, err = vaultCollection.InsertOne(ctx, newVault)
+
+		_, err = ctrl.VaultService.CreateVault(ctx, newVault)
 
 		if err != nil {
 			return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
@@ -62,7 +65,7 @@ func AddToVault(c *fiber.Ctx) error {
 
 	}
 
-	_, err = vaultCollection.UpdateOne(ctx, bson.M{"userId": user.Id}, bson.M{"$push": bson.M{"data": vault}})
+	_, err = ctrl.VaultService.UpdateVault(ctx, user.Id, vault)
 
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
@@ -71,7 +74,6 @@ func AddToVault(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", "Vault updated successfully")
 
 }
-
 
 // func validateType(vault *schemas.VaultSchema) error {
 // 	validTypes := []utils.VaultType{utils.Credentias}

@@ -31,8 +31,9 @@ func ConnectDB() *mongo.Client {
 
 }
 
-var DB *mongo.Client = ConnectDB()
 
-func GetCollection(collectionName string) *mongo.Collection {
-	return DB.Database("fiber").Collection(collectionName)
+var DB_NAME = "fiber"
+
+func GetCollection(DB *mongo.Client,collectionName string) *mongo.Collection {
+	return DB.Database(DB_NAME).Collection(collectionName)
 }

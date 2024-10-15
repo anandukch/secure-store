@@ -1,16 +1,14 @@
 package controllers
 
 import (
-	"context"
 	"net/http"
 	"pass-saver/src/handler"
 	"pass-saver/src/models"
-	"pass-saver/src/repo"
 	"pass-saver/src/response"
+	"pass-saver/src/service"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 
@@ -18,8 +16,9 @@ import (
 )
 
 type AuthController struct {
-	UserRepo *repo.UserRepository
+	UserService *service.UserService
 }
+
 var validate = validator.New()
 
 func (ac *AuthController) CreateUser(c *fiber.Ctx) error {
@@ -49,7 +48,7 @@ func (ac *AuthController) CreateUser(c *fiber.Ctx) error {
 		Password: string(encrypted_password),
 	}
 
-	result, err := ac.UserRepo.CreateUser(c, newUser)
+	result, err := ac.UserService.CreateUser(c, newUser)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
@@ -57,7 +56,7 @@ func (ac *AuthController) CreateUser(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
 }
 
-func SignIn(c *fiber.Ctx) error {
+func (ctrl *AuthController) SignIn(c *fiber.Ctx) error {
 	var request schemas.AuthRequest
 
 	if err := c.BodyParser(&request); err != nil {
@@ -70,8 +69,9 @@ func SignIn(c *fiber.Ctx) error {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Email and password are required")
 	}
 
-	var user models.User
-	if err := userCollection.FindOne(context.Background(), bson.M{"email": request.Email}).Decode(&user); err != nil {
+	var user *models.User
+	user, err := ctrl.UserService.GetUserByEmail(c.Context(), request.Email)
+	if err != nil {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid email")
 	}
 

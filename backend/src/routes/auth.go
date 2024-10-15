@@ -1,28 +1,20 @@
 package routes
 
 import (
-	"pass-saver/src/config"
-	"pass-saver/src/controllers"
-	"pass-saver/src/repo"
-
 	"github.com/gofiber/fiber/v2"
+	"pass-saver/src/controllers"
 )
 
-func AuthRoutes(app fiber.Router) {
+type AuthRoute struct {
+	AuthController controllers.AuthController
+}
+
+func AuthRoutes(app fiber.Router, controller controllers.AuthController) {
 	router := app.Group("/auth")
-
-	userRepo := &repo.UserRepository{
-		Model: config.GetCollection(USERS),
-	}
-	
-	authController := controllers.AuthController{
-		UserRepo: userRepo,
-	}
-
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Auth Route")
 	})
 
-	router.Post("/signup", authController.CreateUser)
-	router.Post("/login", SignIn)
+	router.Post("/signup", controller.CreateUser)
+	router.Post("/login", controller.SignIn)
 }

@@ -6,3 +6,9 @@ const (
 	Credentias VaultType = "password"
 )
 
+
+const (
+	UserModel string = "users"
+	VaultModel string = "vault"
+)
+

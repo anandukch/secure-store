@@ -1,24 +1,25 @@
 package middlewares
 
 import (
-	"context"
 	"net/http"
-	"pass-saver/src/config"
 	"pass-saver/src/handler"
 	"pass-saver/src/models"
 	"pass-saver/src/response"
+	"pass-saver/src/service"
 	"strings"
+
 	"github.com/gofiber/fiber/v2"
+
 	// "go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	// "golang.org/x/crypto/bcrypt"
 )
 
-var userCollection *mongo.Collection = config.GetCollection("users") 
+type AuthMiddleWare struct {
+	UserService *service.UserService
+}
 
-func AuthMiddleWare(c *fiber.Ctx) error {
+func (a *AuthMiddleWare) Middleware(c *fiber.Ctx) error {
 	var access_token string
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
@@ -39,7 +40,7 @@ func AuthMiddleWare(c *fiber.Ctx) error {
 	}
 	var user models.User
 	objId, _ := primitive.ObjectIDFromHex(claims["id"].(string)) // Perform type assertion
-	if err := userCollection.FindOne(context.Background(), bson.M{"_id": objId}).Decode(&user); err != nil {
+	if _, err := a.UserService.GetUserById(c.Context(), objId); err != nil {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid credentials")
 	}
 	c.Locals("user", user)
