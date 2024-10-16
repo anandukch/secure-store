@@ -11,12 +11,14 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"go.mongodb.org/mongo-driver/mongo"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func main() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		// Prefork: 	 true,
+	})
 
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
@@ -51,6 +53,7 @@ func main() {
 	vaultController := controllers.VaultController{
 		VaultService: vaultService,
 	}
+
 	userController := controllers.UserController{
 		UserService: userService,
 	}
