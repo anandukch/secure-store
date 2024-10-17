@@ -42,6 +42,8 @@ func main() {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "ok", "message": "healthcheck is ok"})
 	})
 
+	// Initialize services
+
 	userService := &service.UserService{
 		Model: config.GetCollection(DB, common.UserModel),
 	}
@@ -49,6 +51,8 @@ func main() {
 	vaultService := &service.VaultService{
 		Model: config.GetCollection(DB, common.VaultModel),
 	}
+
+	// Initialize controllers
 
 	vaultController := controllers.VaultController{
 		VaultService: vaultService,
@@ -62,14 +66,31 @@ func main() {
 		UserService: userService,
 	}
 
+	// Initialize middlewares
+
 	authMiddleware := middlewares.AuthMiddleWare{
 		UserService: userService,
 	}
 
-	api := app.Group("/api")
-	routes.AuthRoutes(api, authController)
-	routes.UserRoutes(api, userController, authMiddleware)
-	routes.VaultRoutes(api, vaultController, authMiddleware)
+	// Initialize routes
 
+	authRouter := &routes.AuthRoute{
+		AuthController: authController,
+	}
+
+	userRouter := &routes.UserRouter{
+		UserController: userController,
+		AuthMiddleware: authMiddleware,
+	}
+
+	vaultRouter := &routes.VaultRouter{
+		VaultController: vaultController,
+		AuthMiddleware:  authMiddleware,
+	}
+
+	api := app.Group("/api")
+	authRouter.Register(api)
+	userRouter.Register(api)
+	vaultRouter.Register(api)
 	app.Listen(":5000")
 }

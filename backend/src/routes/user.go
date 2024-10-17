@@ -7,18 +7,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserRoute struct {
+type UserRouter struct {
 	UserController controllers.UserController
+	AuthMiddleware middlewares.AuthMiddleWare
 }
 
-func UserRoutes(app fiber.Router, controller controllers.UserController,authMiddleware middlewares.AuthMiddleWare) {
+func (ur *UserRouter) Register(app fiber.Router) {
 	router := app.Group("/user")
 	router.Use(func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "application/json")
 		return c.Next()
 	})
-	router.Get("/profile", authMiddleware.Middleware, controller.GetUserProfile)
-	router.Get("/", controller.GetAllUsers)
-	router.Get("/:id", controller.GetUserById)
-	router.Post("/", controller.CreateUser)
+	router.Get("/profile", ur.AuthMiddleware.Middleware, ur.UserController.GetUserProfile)
+	router.Get("/", ur.UserController.GetAllUsers)
+	router.Get("/:id", ur.UserController.GetUserById)
+	router.Post("/", ur.UserController.CreateUser)
 }

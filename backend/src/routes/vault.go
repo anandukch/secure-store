@@ -7,9 +7,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func VaultRoutes(app fiber.Router, controller controllers.VaultController, authMiddleware middlewares.AuthMiddleWare) {
+type VaultRouter struct {
+	VaultController controllers.VaultController
+	AuthMiddleware  middlewares.AuthMiddleWare
+}
+
+func (vr *VaultRouter) Register(app fiber.Router) {
 	router := app.Group("/vault")
-	router.Use(authMiddleware.Middleware)
-	router.Get("/", controller.GetVault)
-	router.Post("/", controller.AddToVault)
+	router.Use(vr.AuthMiddleware.Middleware)
+	router.Get("/", vr.VaultController.GetVault)
+	router.Post("/", vr.VaultController.AddToVault)
 }
