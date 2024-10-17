@@ -54,15 +54,15 @@ func main() {
 
 	// Initialize controllers
 
-	vaultController := controllers.VaultController{
+	vaultController := &controllers.VaultController{
 		VaultService: vaultService,
 	}
 
-	userController := controllers.UserController{
+	userController := &controllers.UserController{
 		UserService: userService,
 	}
 
-	authController := controllers.AuthController{
+	authController := &controllers.AuthController{
 		UserService: userService,
 	}
 
@@ -73,7 +73,7 @@ func main() {
 	}
 
 	// Initialize routes
-
+	
 	authRouter := &routes.AuthRoute{
 		AuthController: authController,
 	}

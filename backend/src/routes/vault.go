@@ -8,7 +8,7 @@ import (
 )
 
 type VaultRouter struct {
-	VaultController controllers.VaultController
+	VaultController *controllers.VaultController
 	AuthMiddleware  middlewares.AuthMiddleWare
 }
 

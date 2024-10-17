@@ -6,7 +6,7 @@ import (
 )
 
 type AuthRoute struct {
-	AuthController controllers.AuthController
+	AuthController *controllers.AuthController
 }
 
 func (authRouter *AuthRoute) Register(app fiber.Router) {

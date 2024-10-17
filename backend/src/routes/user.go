@@ -8,7 +8,7 @@ import (
 )
 
 type UserRouter struct {
-	UserController controllers.UserController
+	UserController *controllers.UserController
 	AuthMiddleware middlewares.AuthMiddleWare
 }
 
