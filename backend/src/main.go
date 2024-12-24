@@ -92,5 +92,6 @@ func main() {
 	authRouter.Register(api)
 	userRouter.Register(api)
 	vaultRouter.Register(api)
+	print("Server is running on port 5000")
 	app.Listen(":5000")
 }
