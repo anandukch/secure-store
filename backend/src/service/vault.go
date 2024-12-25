@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"pass-saver/src/models"
+	"pass-saver/src/pkg/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

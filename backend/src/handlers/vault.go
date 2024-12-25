@@ -1,21 +1,21 @@
-package controllers
+package handlers
 
 import (
 	"context"
 	"net/http"
-	"pass-saver/src/models"
-	"pass-saver/src/response"
+	"pass-saver/src/pkg/models"
+	"pass-saver/src/pkg/response"
 	"pass-saver/src/service"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type VaultController struct {
+type VaultHandler struct {
 	VaultService *service.VaultService
 }
 
-func (ctrl *VaultController) GetVault(c *fiber.Ctx) error {
+func (ctrl *VaultHandler) GetVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -30,7 +30,7 @@ func (ctrl *VaultController) GetVault(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", userVault.Data)
 }
 
-func (ctrl *VaultController) AddToVault(c *fiber.Ctx) error {
+func (ctrl *VaultHandler) AddToVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var vault models.VaultData

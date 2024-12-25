@@ -1,11 +1,11 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
 	"pass-saver/src/common"
-	"pass-saver/src/models"
-	"pass-saver/src/response"
-	"pass-saver/src/schemas"
+	"pass-saver/src/pkg/models"
+	"pass-saver/src/pkg/response"
+	"pass-saver/src/pkg/schemas"
 	"pass-saver/src/service"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,17 +13,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserController struct {
+type UserHandler struct {
 	UserService *service.UserService
 }
 
-func (uc *UserController) GetUserProfile(c *fiber.Ctx) error {
+func (uc *UserHandler) GetUserProfile(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 
 	return response.JSONResponse(c, http.StatusOK, "success", response.FilteredResponse(user))
 }
 
-func (uc *UserController) GetUserById(c *fiber.Ctx) error {
+func (uc *UserHandler) GetUserById(c *fiber.Ctx) error {
 	id, idErr := common.ToObjectID(c.Params("id"))
 	if idErr != nil {
 		return response.JSONResponse(c, http.StatusBadRequest, "error", idErr.Error())
@@ -38,7 +38,7 @@ func (uc *UserController) GetUserById(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", response.FilteredResponse(*user))
 }
 
-func (ac *UserController) CreateUser(c *fiber.Ctx) error {
+func (ac *UserHandler) CreateUser(c *fiber.Ctx) error {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var user schemas.CreateUser
 	// defer cancel()
@@ -73,7 +73,7 @@ func (ac *UserController) CreateUser(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
 }
 
-func (uc *UserController) GetAllUsers(c *fiber.Ctx) error {
+func (uc *UserHandler) GetAllUsers(c *fiber.Ctx) error {
 	users, err := uc.UserService.GetAllUsers(c)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)

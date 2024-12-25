@@ -1,11 +1,10 @@
 package response
 
 import (
-	"pass-saver/src/models"
+	"pass-saver/src/pkg/models"
 
 	"github.com/gofiber/fiber/v2"
 )
-
 
 // type UserResponse struct {
 // 	Status  int `json:"status"`

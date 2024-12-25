@@ -4,7 +4,7 @@ import (
 	"os"
 	"pass-saver/src/common"
 	"pass-saver/src/config"
-	"pass-saver/src/controllers"
+	"pass-saver/src/handlers"
 	"pass-saver/src/middlewares"
 	"pass-saver/src/routes"
 	"pass-saver/src/service"
@@ -54,15 +54,15 @@ func main() {
 
 	// Initialize controllers
 
-	vaultController := &controllers.VaultController{
+	vaultController := &handlers.VaultHandler{
 		VaultService: vaultService,
 	}
 
-	userController := &controllers.UserController{
+	userController := &handlers.UserHandler{
 		UserService: userService,
 	}
 
-	authController := &controllers.AuthController{
+	authController := &handlers.AuthHandler{
 		UserService: userService,
 	}
 
@@ -73,19 +73,19 @@ func main() {
 	}
 
 	// Initialize routes
-	
+
 	authRouter := &routes.AuthRoute{
-		AuthController: authController,
+		Handler: authController,
 	}
 
 	userRouter := &routes.UserRouter{
-		UserController: userController,
+		Handler:        userController,
 		AuthMiddleware: authMiddleware,
 	}
 
 	vaultRouter := &routes.VaultRouter{
-		VaultController: vaultController,
-		AuthMiddleware:  authMiddleware,
+		Handler:        vaultController,
+		AuthMiddleware: authMiddleware,
 	}
 
 	api := app.Group("/api")
@@ -93,7 +93,7 @@ func main() {
 	userRouter.Register(api)
 	vaultRouter.Register(api)
 	print("Server is running on port 5050")
-	if err:= app.Listen(":5050"); err != nil {
+	if err := app.Listen(":5050"); err != nil {
 		panic(err)
 	}
 }

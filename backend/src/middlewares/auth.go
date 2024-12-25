@@ -3,8 +3,8 @@ package middlewares
 import (
 	"net/http"
 	"pass-saver/src/handler"
-	"pass-saver/src/models"
-	"pass-saver/src/response"
+	"pass-saver/src/pkg/models"
+	"pass-saver/src/pkg/response"
 	"pass-saver/src/service"
 	"strings"
 

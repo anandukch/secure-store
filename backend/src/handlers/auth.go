@@ -1,27 +1,26 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
 	"pass-saver/src/handler"
-	"pass-saver/src/models"
-	"pass-saver/src/response"
+	"pass-saver/src/pkg/models"
+	"pass-saver/src/pkg/response"
+	"pass-saver/src/pkg/schemas"
 	"pass-saver/src/service"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
-
-	"pass-saver/src/schemas"
 )
 
-type AuthController struct {
+type AuthHandler struct {
 	UserService *service.UserService
 }
 
 var validate = validator.New()
 
-func (ac *AuthController) CreateUser(c *fiber.Ctx) error {
+func (ac *AuthHandler) CreateUser(c *fiber.Ctx) error {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var user schemas.CreateUser
 	// defer cancel()
@@ -56,7 +55,7 @@ func (ac *AuthController) CreateUser(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
 }
 
-func (ctrl *AuthController) SignIn(c *fiber.Ctx) error {
+func (ctrl *AuthHandler) SignIn(c *fiber.Ctx) error {
 	var request schemas.AuthRequest
 
 	if err := c.BodyParser(&request); err != nil {

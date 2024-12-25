@@ -1,12 +1,13 @@
 package routes
 
 import (
+	"pass-saver/src/handlers"
+
 	"github.com/gofiber/fiber/v2"
-	"pass-saver/src/controllers"
 )
 
 type AuthRoute struct {
-	AuthController *controllers.AuthController
+	Handler *handlers.AuthHandler
 }
 
 func (authRouter *AuthRoute) Register(app fiber.Router) {
@@ -15,6 +16,6 @@ func (authRouter *AuthRoute) Register(app fiber.Router) {
 		return c.SendString("Auth Route")
 	})
 
-	router.Post("/signup", authRouter.AuthController.CreateUser)
-	router.Post("/login", authRouter.AuthController.SignIn)
+	router.Post("/signup", authRouter.Handler.CreateUser)
+	router.Post("/login", authRouter.Handler.SignIn)
 }
