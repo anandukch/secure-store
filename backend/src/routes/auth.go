@@ -10,8 +10,7 @@ type AuthRoute struct {
 	Handler *handlers.AuthHandler
 }
 
-func (authRouter *AuthRoute) Register(app fiber.Router) {
-	router := app.Group("/auth")
+func (authRouter *AuthRoute) Register(router fiber.Router) {
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Auth Route")
 	})

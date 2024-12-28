@@ -1,6 +1,3 @@
-.conf {
-    background-color: white; /* Normal background color */
-    position: fixed;        /* Fixes the position relative to the viewport */
-    top: 0;                 /* Aligns it to the top */
-    right: 0;               /* Aligns it to the right */
-  }
+.test {
+    background-color: red;
+}
