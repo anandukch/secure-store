@@ -14,7 +14,7 @@ export default defineConfig({
         lib: {
             formats: ["iife"],
             entry: resolve(__dirname, "./src/content-script/index.tsx"),
-            name: "COntnet Page",
+            name: "Contnet Page",
         },
         rollupOptions: {
             output: {

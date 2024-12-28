@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import browser from "webextension-polyfill";
-import Confirmation from "./components/Confirmation";
+import { SaveCredentialsPopup } from "./components/SaveCredentialsPopup";
+// import Confirmation from "./components/Confirmation";
 
 function App() {
     const [showConfirmation, setShowConfirmation] = React.useState(false);
@@ -40,7 +41,7 @@ function App() {
             if (msg.action === "mount") {
                 if (msg.payload.globalState && msg.payload.globalState.showPopup) {
                     console.log("Show confirmation");
-                    setShowConfirmation(true);
+                    setShowPopup(true);
                 }
             }
 
@@ -60,6 +61,7 @@ function App() {
             //     console.log("response", response);
             // });
 
+            console.log("Login page detected");
             const inputFields = document.querySelectorAll("input");
 
             inputFields.forEach((field) => {
@@ -84,7 +86,7 @@ function App() {
             if ((fieldInfo.type === "BUTTON" || fieldInfo.value === "Login") && fieldInfo.action === "click") {
                 console.log("Login button clicked", fieldInfo);
 
-                setShowConfirmation(true);
+                setShowPopup(true);
 
                 browser.runtime.sendMessage({
                     action: "login",
@@ -128,7 +130,41 @@ function App() {
             console.log("App unmounted");
         };
     }, []);
-    return <>{showConfirmation && <Confirmation handleConfirm={() => setShowConfirmation(false)} />}</>;
+
+    const [showPopup, setShowPopup] = useState(false);
+
+    // Demo credentials
+    const credentials = {
+        username: "demo@example.com",
+        password: "password123",
+        url: "https://example.com",
+    };
+
+    const handleSave = () => {
+        console.log("Saving credentials...");
+        // Add your save logic here
+    };
+
+    const handleCancel = () => {
+        console.log("Cancelled saving credentials");
+        // Add your cancel logic here
+    };
+    // return <>{showConfirmation && <Confirmation handleConfirm={() => setShowConfirmation(false)} />}</>;
+    return (
+        <>
+            <div className="conf">
+                {showPopup && (
+                    <SaveCredentialsPopup
+                        username={credentials.username}
+                        password={credentials.password}
+                        url={credentials.url}
+                        onSave={handleSave}
+                        onCancel={handleCancel}
+                    />
+                )}
+            </div>
+        </>
+    );
 }
 
 export default App;

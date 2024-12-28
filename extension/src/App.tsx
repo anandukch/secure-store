@@ -13,7 +13,7 @@ function App() {
         };
     }, []);
 
-    return <></>;
+    return <>Secure store</>;
 }
 
 export default App;
