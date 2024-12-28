@@ -26,6 +26,7 @@ func main() {
 		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
 		AllowHeaders:     "Content-Type,Authorization",
 	}))
+
 	app.Use(logger.New(logger.Config{
 		Format:     "${time} - ${ip} - ${method} ${path} ${status} - ${latency}\n",
 		TimeFormat: "02-Jan-2006",
@@ -89,7 +90,7 @@ func main() {
 	}
 
 	api := app.Group("/api")
-	authRouter.Register(api)
+	authRouter.Register(api.Group("/auth"))
 	userRouter.Register(api)
 	vaultRouter.Register(api)
 	print("Server is running on port 5050")

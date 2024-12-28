@@ -19,7 +19,6 @@ func (v *VaultService) GetByUserId(c context.Context, userId primitive.ObjectID)
 	if err := v.Model.FindOne(c, bson.M{"userId": userId}).Decode(&vault); err != nil {
 		return nil, err
 	}
-
 	return &vault, nil
 
 }

@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import browser from "webextension-polyfill";
-import Confirmation from "./components/Confirmation";
+import "../index.css";
+import { SaveCredentialsPopup } from "./components/SaveCredentialsPopup";
+// import Confirmation from "./components/Confirmation";
 
 function App() {
     const [showConfirmation, setShowConfirmation] = React.useState(false);
@@ -27,6 +29,8 @@ function App() {
         field.parentNode?.appendChild(suggestionDiv);
     };
 
+    const [showPopup, setShowPopup] = useState(false);
+
     useEffect(() => {
         console.log("App mounted");
         browser.runtime.sendMessage({
@@ -35,12 +39,12 @@ function App() {
                 url: window.location.href,
             },
         });
+
         browser.runtime.onMessage.addListener((msg) => {
             console.log("mount", msg);
             if (msg.action === "mount") {
                 if (msg.payload.globalState && msg.payload.globalState.showPopup) {
                     console.log("Show confirmation");
-                    setShowConfirmation(true);
                 }
             }
 
@@ -60,6 +64,7 @@ function App() {
             //     console.log("response", response);
             // });
 
+            console.log("Login page detected");
             const inputFields = document.querySelectorAll("input");
 
             inputFields.forEach((field) => {
@@ -75,16 +80,23 @@ function App() {
         }
 
         const handleUserInteraction = (event: any) => {
+            console.log("User interaction detected", event);
+
             const fieldInfo = {
                 type: event.target.tagName,
                 value: event.target.value,
                 action: event.type,
             };
 
-            if ((fieldInfo.type === "BUTTON" || fieldInfo.value === "Login") && fieldInfo.action === "click") {
+            if (
+                fieldInfo.type === "BUTTON" &&
+                ["Login", "Submit"].includes(event.target.innerHTML as never) &&
+                fieldInfo.action === "click"
+            ) {
                 console.log("Login button clicked", fieldInfo);
+                console.log(event.target.innerHTML);
 
-                setShowConfirmation(true);
+                setShowPopup(true);
 
                 browser.runtime.sendMessage({
                     action: "login",
@@ -128,7 +140,50 @@ function App() {
             console.log("App unmounted");
         };
     }, []);
-    return <>{showConfirmation && <Confirmation handleConfirm={() => setShowConfirmation(false)} />}</>;
+
+    // Demo credentials
+    const credentials = {
+        username: "demo@example.com",
+        password: "password123",
+        url: "https://example.com",
+    };
+
+    const handleSave = () => {
+        console.log("Saving credentials...");
+        // Add your save logic here
+    };
+
+    const handleCancel = () => {
+
+        console.log("Cancelled saving credentials");
+        setShowPopup(false);
+        // Add your cancel logic here
+    };
+    // return <>{showConfirmation && <Confirmation handleConfirm={() => setShowConfirmation(false)} />}</>;
+    return (
+        <>
+            <div style={{}}>
+                {showPopup && (
+                    <div
+                        style={{
+                            position: "fixed",
+                            top: "16px",
+                            right: "16px",
+                            zIndex: 9999,
+                        }}
+                    >
+                        <SaveCredentialsPopup
+                            username={credentials.username}
+                            password={credentials.password}
+                            url={credentials.url}
+                            onSave={handleSave}
+                            onCancel={handleCancel}
+                        />
+                    </div>
+                )}
+            </div>
+        </>
+    );
 }
 
 export default App;

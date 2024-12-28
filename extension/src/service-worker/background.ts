@@ -54,7 +54,7 @@ browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: 
     }
     if (msg.action === "login") {
         console.log("login", msg);
-
+    
         const url = new URL(msg.payload?.url as string);
         const urlParts = url.hostname.split("/");
         console.log("domain", urlParts[0]);

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import "./index.css";
 import "./App.css";
 import browser from "webextension-polyfill";
 
@@ -13,7 +14,11 @@ function App() {
         };
     }, []);
 
-    return <></>;
+    return (
+        <>
+            <div className="bg-red-800 p-4">Secure store</div>
+        </>
+    );
 }
 
 export default App;
