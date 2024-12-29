@@ -39,6 +39,7 @@ function App() {
             },
         });
 
+
         browser.runtime.onMessage.addListener((msg) => {
             console.log("mount", msg);
             if (msg.action === "mount") {
@@ -68,6 +69,7 @@ function App() {
             // });
 
             console.log("Login page detected");
+            console.log("Login page detected");
             const inputFields = document.querySelectorAll("input");
 
             inputFields.forEach((field) => {
@@ -85,6 +87,8 @@ function App() {
         const handleUserInteraction = (event: any) => {
             console.log("User interaction detected", event);
 
+            console.log("User interaction detected", event);
+
             const fieldInfo = {
                 type: event.target.tagName,
                 value: event.target.value,
@@ -96,7 +100,13 @@ function App() {
                 ["Login", "Submit"].includes(event.target.innerHTML as never) &&
                 fieldInfo.action === "click"
             ) {
+            if (
+                fieldInfo.type === "BUTTON" &&
+                ["Login", "Submit"].includes(event.target.innerHTML as never) &&
+                fieldInfo.action === "click"
+            ) {
                 console.log("Login button clicked", fieldInfo);
+                console.log(event.target.innerHTML);
                 console.log(event.target.innerHTML);
 
                 setShowPopup(true);
