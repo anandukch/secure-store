@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import browser from "webextension-polyfill";
 import { SaveCredentialsPopup } from "./components/SaveCredentialsPopup";
+import { useSuggestionBox } from "../hooks/useSuggestionBox";
+import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 import { useSuggestionBox } from "../hooks/useSuggestionBox";
 import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 // import Confirmation from "./components/Confirmation";
 
 function App() {
+    const [showPopup, setShowPopup] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -54,6 +58,11 @@ function App() {
         });
         // console.log("tested message ", a);
 
+        browser.runtime.sendMessage({ action: "check_credentials", payload: { url: window.location.href } }).then((response) => {
+            console.log("response message ", response);
+        });
+        // console.log("tested message ", a);
+
         if (window.location.href.includes("login")) {
             // const usernameField = document.querySelector('input[name="username"]') as HTMLInputElement;
             // const passwordField = document.querySelector('input[name="password"]') as HTMLInputElement;
@@ -67,6 +76,7 @@ function App() {
             //     console.log("response", response);
             // });
 
+            console.log("Login page detected");
             console.log("Login page detected");
             console.log("Login page detected");
             const inputFields = document.querySelectorAll("input");
@@ -94,11 +104,7 @@ function App() {
                 action: event.type,
             };
 
-            if (
-                fieldInfo.type === "BUTTON" &&
-                ["Login", "Submit"].includes(event.target.innerHTML as never) &&
-                fieldInfo.action === "click"
-            ) {
+         
                 if (
                     fieldInfo.type === "BUTTON" &&
                     ["Login", "Submit"].includes(event.target.innerHTML as never) &&
@@ -107,6 +113,7 @@ function App() {
                     console.log("Login button clicked", fieldInfo);
                     console.log(event.target.innerHTML);
                     console.log(event.target.innerHTML);
+                console.log(event.target.innerHTML);
 
                     setShowPopup(true);
                     console.log("login payload", {
@@ -159,7 +166,7 @@ function App() {
             return () => {
                 console.log("App unmounted");
             };
-        };
+      
     }, []);
 
     // Demo credentials
