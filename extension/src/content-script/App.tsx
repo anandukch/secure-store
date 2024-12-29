@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import browser from "webextension-polyfill";
-import { SaveCredentialsPopup } from "./components/SaveCredentialsPopup";
+import { SaveCredentialsPopup } from "./components/save-credentials/SaveCredentialsPopup";
 import { useSuggestionBox } from "../hooks/useSuggestionBox";
 import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 // import Confirmation from "./components/Confirmation";
@@ -31,7 +31,7 @@ function App() {
     // };
 
     useEffect(() => {
-        console.log("App mounted");
+        // console.log("App mounted");
         browser.runtime.sendMessage({
             action: "mount",
             payload: {
@@ -40,7 +40,7 @@ function App() {
         });
 
         browser.runtime.onMessage.addListener((msg) => {
-            console.log("mount", msg);
+            // console.log("mount", msg);
             if (msg.action === "mount") {
                 if (msg.payload.globalState && msg.payload.globalState.showPopup) {
                     console.log("Show confirmation");
@@ -67,8 +67,7 @@ function App() {
             //     console.log("response", response);
             // });
 
-            console.log("Login page detected");
-            console.log("Login page detected");
+        
             const inputFields = document.querySelectorAll("input");
 
             inputFields.forEach((field) => {
@@ -84,7 +83,7 @@ function App() {
         }
 
         const handleUserInteraction = (event: any) => {
-            console.log("User interaction detected", event);
+            // console.log("User interaction detected", event);
 
             const fieldInfo = {
                 type: event.target.tagName,
@@ -131,7 +130,7 @@ function App() {
                     action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
                 };
 
-                console.log("Field information:", fieldInfo);
+                // console.log("Field information:", fieldInfo);
                 browser.runtime
                     .sendMessage({
                         action: "form_interaction",
@@ -154,7 +153,6 @@ function App() {
         };
     }, []);
 
-    // Demo credentials
     const credentials = {
         username: "demo@example.com",
         password: "password123",

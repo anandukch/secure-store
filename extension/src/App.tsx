@@ -5,7 +5,6 @@ import browser from "webextension-polyfill";
 import { AuthPopup } from "./components/SignIn";
 import { CredentialStats } from "./components/CredentialStats";
 
-
 function App() {
     const [authType, setAuthType] = useState<"login" | "signup">("login");
     const [openAuthPopup, setOpenAuthPopup] = useState(true);
@@ -29,7 +28,17 @@ function App() {
         setAuthType(type);
     };
 
-    
+    const handleManageClick = () => {
+        console.log("Manage clicked");
+    };
+
+    const handleSettingsClick = () => {
+        console.log("Settings clicked");
+    };
+
+    const handleAddClick = () => {
+        console.log("Add clicked");
+    };
 
     return (
         <>
@@ -44,12 +53,12 @@ function App() {
                 )}
                 {openCredentialsStat && (
                     <CredentialStats
-                        totalCredentials={23}
-                        onManageClick={() => console.log("manage")}
-                        onSettingsClick={() => console.log("add")}
+                        totalCredentials={42}
+                        onManageClick={handleManageClick}
+                        onSettingsClick={handleSettingsClick}
+                        onAddClick={handleAddClick}
                     />
                 )}
-                
             </div>
         </>
     );
