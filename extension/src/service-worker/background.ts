@@ -29,15 +29,12 @@ type PayloadType = object | string | number | boolean | null | undefined;
 
 type MessageInterface = {
     action: string;
-    payload?: {
-        [key: string]: PayloadType;
-    };
+    payload?: any;
 };
 
 let globalState: GlobalState;
 
-browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: ResponseCallback) => {
-    response({ message: "success" });
+browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: any) => {
     if (msg.action === "mount") {
         console.log("mount", msg.payload!.url!);
 
@@ -63,7 +60,13 @@ browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: 
             showPopup: true,
         };
         console.log("login", globalState);
+        response({ message: "login  reposne from background" });
+
     }
 
-    return true;
+    if (msg.action === "check_credentials") {
+        console.log("check_credentials", msg);
+        response({ message: "success  check_credentails" });
+    }
+
 });
