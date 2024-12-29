@@ -1,35 +1,34 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import browser from "webextension-polyfill";
-import "../index.css";
 import { SaveCredentialsPopup } from "./components/SaveCredentialsPopup";
+import { useSuggestionBox } from "../hooks/useSuggestionBox";
+import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 // import Confirmation from "./components/Confirmation";
 
 function App() {
-    const [showConfirmation, setShowConfirmation] = React.useState(false);
+    const [showPopup, setShowPopup] = useState(false);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const createSuggestionBox = (field: HTMLInputElement) => {
-        const suggestionDiv = document.createElement("div");
-        suggestionDiv.style.width = `${field.offsetWidth}px`;
-        suggestionDiv.style.height = "50px";
-        suggestionDiv.style.position = "absolute";
-        suggestionDiv.style.top = `${field.offsetTop + field.offsetHeight}px`;
-        suggestionDiv.style.left = `${field.offsetLeft}px`;
-        suggestionDiv.style.zIndex = "1000";
-        suggestionDiv.style.border = "1px solid black";
-        suggestionDiv.style.display = "none";
-        suggestionDiv.style.textAlign = "center";
-        suggestionDiv.style.color = "black";
-        suggestionDiv.style.fontWeight = "bold";
-        suggestionDiv.style.fontSize = "12px";
-        suggestionDiv.style.padding = "5px";
-        suggestionDiv.style.borderRadius = "5px";
-        suggestionDiv.style.display = "block";
-        suggestionDiv.innerText = "Suggestion";
-        field.parentNode?.appendChild(suggestionDiv);
-    };
-
-    const [showPopup, setShowPopup] = useState(false);
+    // const createSuggestionBox = (field: HTMLInputElement) => {
+    //     const suggestionDiv = document.createElement("div");
+    //     suggestionDiv.style.width = `${field.offsetWidth}px`;
+    //     suggestionDiv.style.height = "50px";
+    //     suggestionDiv.style.position = "absolute";
+    //     suggestionDiv.style.top = `${field.offsetTop + field.offsetHeight}px`;
+    //     suggestionDiv.style.left = `${field.offsetLeft}px`;
+    //     suggestionDiv.style.zIndex = "1000";
+    //     suggestionDiv.style.border = "1px solid black";
+    //     suggestionDiv.style.display = "none";
+    //     suggestionDiv.style.textAlign = "center";
+    //     suggestionDiv.style.color = "black";
+    //     suggestionDiv.style.fontWeight = "bold";
+    //     suggestionDiv.style.fontSize = "12px";
+    //     suggestionDiv.style.padding = "5px";
+    //     suggestionDiv.style.borderRadius = "5px";
+    //     suggestionDiv.style.display = "block";
+    //     suggestionDiv.innerText = "Suggestion";
+    //     field.parentNode?.appendChild(suggestionDiv);
+    // };
 
     useEffect(() => {
         console.log("App mounted");
@@ -50,7 +49,11 @@ function App() {
 
             return Promise.resolve("Got your message");
         });
-        // browser.runtime.sendMessage({ action: "mount", payload: { url: window.location.href } });
+        browser.runtime.sendMessage({ action: "check_credentials", payload: { url: window.location.href } }).then((response) => {
+            console.log("response message ", response);
+        });
+        // console.log("tested message ", a);
+
         if (window.location.href.includes("login")) {
             // const usernameField = document.querySelector('input[name="username"]') as HTMLInputElement;
             // const passwordField = document.querySelector('input[name="password"]') as HTMLInputElement;
@@ -97,14 +100,22 @@ function App() {
                 console.log(event.target.innerHTML);
 
                 setShowPopup(true);
-
-                browser.runtime.sendMessage({
-                    action: "login",
-                    payload: {
-                        fieldInfo,
-                        url: window.location.href,
-                    },
+                console.log("login payload", {
+                    url: window.location.href,
+                    fieldInfo,
                 });
+
+                browser.runtime
+                    .sendMessage({
+                        action: "login",
+                        payload: {
+                            fieldInfo,
+                            url: window.location.href,
+                        },
+                    })
+                    .then((response) => {
+                        console.log("Response from background script:", response);
+                    });
             }
 
             browser.runtime.sendMessage({
@@ -154,11 +165,26 @@ function App() {
     };
 
     const handleCancel = () => {
-
         console.log("Cancelled saving credentials");
         setShowPopup(false);
         // Add your cancel logic here
     };
+
+    const { showSuggestions, inputRect, handleSelect, closeSuggestions } = useSuggestionBox();
+
+    // Demo stored credentials
+    const storedCredentials = [
+        {
+            username: "demo@example.com",
+            password: "password123",
+            url: "https://example.com",
+        },
+        {
+            username: "user@test.com",
+            password: "test456",
+            url: "https://test.com",
+        },
+    ];
     // return <>{showConfirmation && <Confirmation handleConfirm={() => setShowConfirmation(false)} />}</>;
     return (
         <>
@@ -180,6 +206,15 @@ function App() {
                             onCancel={handleCancel}
                         />
                     </div>
+                )}
+
+                {showSuggestions && inputRect && (
+                    <SuggestionBox
+                        credentials={storedCredentials}
+                        inputRect={inputRect}
+                        onSelect={handleSelect}
+                        onClose={closeSuggestions}
+                    />
                 )}
             </div>
         </>

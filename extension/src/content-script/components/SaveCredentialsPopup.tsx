@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 // import { Save, X, ChevronDown, Lock } from 'lucide-react';
 
 interface SaveCredentialsPopupProps {
