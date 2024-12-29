@@ -21,7 +21,7 @@ export function useSuggestionBox() {
             }
         }
 
-        const inputs = document.querySelectorAll('input[type="text"],input[type="username"], input[type="email"], input[type="password"]');
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
         inputs.forEach((input) => {
             input.addEventListener("focus", handleInputFocus);
         });
