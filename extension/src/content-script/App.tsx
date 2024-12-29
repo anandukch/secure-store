@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import { useEffect, useState } from "react";
 import browser from "webextension-polyfill";
 import { SaveCredentialsPopup } from "./components/SaveCredentialsPopup";
-import { useSuggestionBox } from "../hooks/useSuggestionBox";
-import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 import { useSuggestionBox } from "../hooks/useSuggestionBox";
 import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 // import Confirmation from "./components/Confirmation";
 
 function App() {
-    const [showPopup, setShowPopup] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
