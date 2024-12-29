@@ -39,7 +39,6 @@ function App() {
             },
         });
 
-
         browser.runtime.onMessage.addListener((msg) => {
             console.log("mount", msg);
             if (msg.action === "mount") {
@@ -100,65 +99,66 @@ function App() {
                 ["Login", "Submit"].includes(event.target.innerHTML as never) &&
                 fieldInfo.action === "click"
             ) {
-            if (
-                fieldInfo.type === "BUTTON" &&
-                ["Login", "Submit"].includes(event.target.innerHTML as never) &&
-                fieldInfo.action === "click"
-            ) {
-                console.log("Login button clicked", fieldInfo);
-                console.log(event.target.innerHTML);
-                console.log(event.target.innerHTML);
+                if (
+                    fieldInfo.type === "BUTTON" &&
+                    ["Login", "Submit"].includes(event.target.innerHTML as never) &&
+                    fieldInfo.action === "click"
+                ) {
+                    console.log("Login button clicked", fieldInfo);
+                    console.log(event.target.innerHTML);
+                    console.log(event.target.innerHTML);
 
-                setShowPopup(true);
-                console.log("login payload", {
-                    url: window.location.href,
-                    fieldInfo,
+                    setShowPopup(true);
+                    console.log("login payload", {
+                        url: window.location.href,
+                        fieldInfo,
+                    });
+
+                    browser.runtime
+                        .sendMessage({
+                            action: "login",
+                            payload: {
+                                fieldInfo,
+                                url: window.location.href,
+                            },
+                        })
+                        .then((response) => {
+                            console.log("Response from background script:", response);
+                        });
+                }
+
+                browser.runtime.sendMessage({
+                    action: "form_interaction",
+                    payload: event,
                 });
+                if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
+                    const fieldInfo = {
+                        type: event.target.tagName,
+                        value: event.target.value,
+                        action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
+                    };
 
-                browser.runtime
-                    .sendMessage({
-                        action: "login",
-                        payload: {
-                            fieldInfo,
-                            url: window.location.href,
-                        },
-                    })
-                    .then((response) => {
-                        console.log("Response from background script:", response);
-                    });
+                    console.log("Field information:", fieldInfo);
+                    browser.runtime
+                        .sendMessage({
+                            action: "form_interaction",
+                            payload: fieldInfo,
+                        })
+                        .then((response) => {
+                            console.log("Response from background script:", response);
+                        });
+                }
             }
 
-            browser.runtime.sendMessage({
-                action: "form_interaction",
-                payload: event,
-            });
-            if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
-                const fieldInfo = {
-                    type: event.target.tagName,
-                    value: event.target.value,
-                    action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
-                };
+            document.addEventListener("keydown", handleUserInteraction);
+            document.addEventListener("keyup", handleUserInteraction);
+            document.addEventListener("click", handleUserInteraction);
+            document.addEventListener("focus", handleUserInteraction);
+            document.addEventListener("change", handleUserInteraction);
 
-                console.log("Field information:", fieldInfo);
-                browser.runtime
-                    .sendMessage({
-                        action: "form_interaction",
-                        payload: fieldInfo,
-                    })
-                    .then((response) => {
-                        console.log("Response from background script:", response);
-                    });
-            }
-        };
-
-        document.addEventListener("keydown", handleUserInteraction);
-        document.addEventListener("keyup", handleUserInteraction);
-        document.addEventListener("click", handleUserInteraction);
-        document.addEventListener("focus", handleUserInteraction);
-        document.addEventListener("change", handleUserInteraction);
-
-        return () => {
-            console.log("App unmounted");
+            return () => {
+                console.log("App unmounted");
+            };
         };
     }, []);
 
