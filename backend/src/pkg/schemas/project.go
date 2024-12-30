@@ -1,7 +1,6 @@
 package schemas
 
-type VaultRequest struct {
-	ProjectId                string `json:"projectId" validate:"required"`
+type ProjectRequest struct {
 	EncryptedKey             string `json:"encryptedKey" validate:"required"`
 	KeyDecryptionNonce       string `json:"keyDecryptionNonce" validate:"required"`
 	EncryptedMetadata        string `json:"encryptedMetadata" validate:"required"`

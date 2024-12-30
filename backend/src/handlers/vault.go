@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"pass-saver/src/pkg/models"
 	"pass-saver/src/pkg/response"
+	"pass-saver/src/pkg/schemas"
 	"pass-saver/src/service"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 
 type VaultHandler struct {
 	VaultService *service.VaultService
+	UserService  *service.UserService
 }
 
 func (ctrl *VaultHandler) GetVault(c *fiber.Ctx) error {
@@ -27,13 +29,13 @@ func (ctrl *VaultHandler) GetVault(c *fiber.Ctx) error {
 		return response.JSONResponse(c, http.StatusNotFound, "error", "Vault not found")
 	}
 
-	return response.JSONResponse(c, http.StatusOK, "success", userVault.Data)
+	return response.JSONResponse(c, http.StatusOK, "success", userVault)
 }
 
 func (ctrl *VaultHandler) AddToVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var vault models.VaultData
+	var vault schemas.VaultRequest
 	defer cancel()
 
 	if err := c.BodyParser(&vault); err != nil {
@@ -47,25 +49,7 @@ func (ctrl *VaultHandler) AddToVault(c *fiber.Ctx) error {
 		return response.JSONResponse(c, http.StatusBadRequest, "error", validationErr.Error())
 	}
 
-	_, err := ctrl.VaultService.GetByUserId(ctx, user.Id)
-
-	if err != nil {
-		newVault := models.Vault{
-			UserId: user.Id,
-			Data:   []models.VaultData{vault},
-		}
-
-		_, err = ctrl.VaultService.CreateVault(ctx, newVault)
-
-		if err != nil {
-			return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
-		}
-
-		return response.JSONResponse(c, http.StatusOK, "success", "Vault created successfully")
-
-	}
-
-	_, err = ctrl.VaultService.UpdateVault(ctx, user.Id, vault)
+	_, err := ctrl.VaultService.AddVault(ctx, user.Id, &vault)
 
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
@@ -73,6 +57,21 @@ func (ctrl *VaultHandler) AddToVault(c *fiber.Ctx) error {
 
 	return response.JSONResponse(c, http.StatusOK, "success", "Vault updated successfully")
 
+}
+
+func (ctrl *VaultHandler) GetAllVaults(c *fiber.Ctx) error {
+	user := c.Locals("user").(models.User)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var userVaults []models.Vault
+	userVaults, err := ctrl.VaultService.GetAllVaultByUserId(ctx, user.Id)
+
+	if err != nil {
+		return response.JSONResponse(c, http.StatusNotFound, "error", "Vault not found")
+	}
+
+	return response.JSONResponse(c, http.StatusOK, "success", userVaults)
 }
 
 // func validateType(vault *schemas.VaultSchema) error {

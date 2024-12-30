@@ -57,6 +57,7 @@ func main() {
 
 	vaultController := &handlers.VaultHandler{
 		VaultService: vaultService,
+		UserService:  userService,
 	}
 
 	userController := &handlers.UserHandler{

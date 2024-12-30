@@ -11,7 +11,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthHandler struct {
@@ -36,15 +35,10 @@ func (ac *AuthHandler) CreateUser(c *fiber.Ctx) error {
 			"error": validationErr.Error(),
 		})
 	}
-	encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
-	}
 	newUser := models.User{
 		Id:       primitive.NewObjectID(),
 		Name:     user.Name,
 		Email:    user.Email,
-		Password: string(encrypted_password),
 	}
 
 	result, err := ac.UserService.CreateUser(c, newUser)
@@ -74,9 +68,6 @@ func (ctrl *AuthHandler) SignIn(c *fiber.Ctx) error {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid email")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
-		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid password")
-	}
 	token, err := handler.GenerateJwtToken(user.Id.Hex(), user.Email)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())

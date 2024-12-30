@@ -10,7 +10,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserHandler struct {
@@ -54,15 +53,14 @@ func (ac *UserHandler) CreateUser(c *fiber.Ctx) error {
 			"error": validationErr.Error(),
 		})
 	}
-	encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
-	}
+	// encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	// if err != nil {
+	// 	return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
+	// }
 	newUser := models.User{
 		Id:       primitive.NewObjectID(),
 		Name:     user.Name,
 		Email:    user.Email,
-		Password: string(encrypted_password),
 	}
 
 	result, err := ac.UserService.CreateUser(c, newUser)
