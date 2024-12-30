@@ -5,11 +5,9 @@ import (
 	"pass-saver/src/common"
 	"pass-saver/src/pkg/models"
 	"pass-saver/src/pkg/response"
-	"pass-saver/src/pkg/schemas"
 	"pass-saver/src/service"
 
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserHandler struct {
@@ -37,39 +35,39 @@ func (uc *UserHandler) GetUserById(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", response.FilteredResponse(*user))
 }
 
-func (ac *UserHandler) CreateUser(c *fiber.Ctx) error {
-	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var user schemas.CreateUser
-	// defer cancel()
+// func (ac *UserHandler) CreateUser(c *fiber.Ctx) error {
+// 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 	var user schemas.CreateUser
+// 	// defer cancel()
 
-	if err := c.BodyParser(&user); err != nil {
-		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
-			"error": err.Error(),
-		})
-	}
+// 	if err := c.BodyParser(&user); err != nil {
+// 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+// 			"error": err.Error(),
+// 		})
+// 	}
 
-	if validationErr := validate.Struct(&user); validationErr != nil {
-		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
-			"error": validationErr.Error(),
-		})
-	}
-	// encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
-	// }
-	newUser := models.User{
-		Id:       primitive.NewObjectID(),
-		Name:     user.Name,
-		Email:    user.Email,
-	}
+// 	if validationErr := validate.Struct(&user); validationErr != nil {
+// 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+// 			"error": validationErr.Error(),
+// 		})
+// 	}
+// 	// encrypted_password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+// 	// if err != nil {
+// 	// 	return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
+// 	// }
+// 	newUser := models.User{
+// 		Id:       primitive.NewObjectID(),
+// 		Name:     user.Name,
+// 		Email:    user.Email,
+// 	}
 
-	result, err := ac.UserService.CreateUser(c, newUser)
-	if err != nil {
-		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
-	}
+// 	result, err := ac.UserService.CreateUser(c, newUser)
+// 	if err != nil {
+// 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
+// 	}
 
-	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
-}
+// 	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
+// }
 
 func (uc *UserHandler) GetAllUsers(c *fiber.Ctx) error {
 	users, err := uc.UserService.GetAllUsers(c)

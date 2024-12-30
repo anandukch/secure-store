@@ -18,7 +18,7 @@ type CreateUser struct {
 	KeyDecryptionSalt   string `json:"keyDecryptionSalt" validate:"required"`
 	KekOpsLimit         int    `json:"kekOpsLimit" validate:"required"`
 	KekMemLimit         int    `json:"kekMemLimit" validate:"required"`
-	RecoveryCode        string `json:"recoveryCode" validate:"required"`
+	// RecoveryCode        string `json:"recoveryCode" validate:"required"`
 	PublicKey           string `json:"publicKey" validate:"required"`
 	EncryptedPrivateKey string `json:"encryptedPrivateKey" validate:"required"`
 }

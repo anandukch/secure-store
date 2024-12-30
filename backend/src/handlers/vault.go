@@ -32,7 +32,7 @@ func (ctrl *VaultHandler) GetVault(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", userVault)
 }
 
-func (ctrl *VaultHandler) AddToVault(c *fiber.Ctx) error {
+func (ctrl *VaultHandler) AddVault(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var vault schemas.VaultRequest

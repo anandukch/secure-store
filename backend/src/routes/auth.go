@@ -17,4 +17,5 @@ func (authRouter *AuthRoute) Register(router fiber.Router) {
 
 	router.Post("/signup", authRouter.Handler.CreateUser)
 	router.Post("/login", authRouter.Handler.SignIn)
+	router.Post("/send-otp", authRouter.Handler.SendOtp)
 }

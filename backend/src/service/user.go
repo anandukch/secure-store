@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"pass-saver/src/pkg/models"
+	"pass-saver/src/pkg/schemas"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,8 +35,26 @@ func (r *UserService) GetUserByEmail(c context.Context, email string) (*models.U
 	return &user, nil
 }
 
-func (u *UserService) CreateUser(c *fiber.Ctx, user models.User) (*mongo.InsertOneResult, error) {
-	result, err := u.Model.InsertOne(c.Context(), user)
+func (u *UserService) CreateUser(c *fiber.Ctx, user *schemas.CreateUser) (*mongo.InsertOneResult, error) {
+	newUser := models.User{
+		Id:                  primitive.NewObjectID(),
+		Name:                user.Name,
+		Email:               user.Email,
+		EncrypedMasterKey:   user.EncrypedMasterKey,
+		KeyDecryptionNonce:  user.KeyDecryptionNonce,
+		KeyDecryptionSalt:   user.KeyDecryptionSalt,
+		KekOpsLimit:         user.KekOpsLimit,
+		KekMemLimit:         user.KekMemLimit,
+		// RecoveryCode:        user.RecoveryCode,
+		PublicKey:           user.PublicKey,
+		EncryptedPrivateKey: user.EncryptedPrivateKey,
+	}
+
+	userExist, err := u.GetUserByEmail(c.Context(), user.Email)
+	if userExist != nil {
+		return nil, err
+	}
+	result, err := u.Model.InsertOne(c.Context(), newUser)
 	if err != nil {
 		return nil, err
 	}

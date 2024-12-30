@@ -15,6 +15,6 @@ type VaultRouter struct {
 func (vr *VaultRouter) Register(app fiber.Router) {
 	router := app.Group("/vault")
 	router.Use(vr.AuthMiddleware.Middleware)
-	router.Post("/", vr.Handler.AddToVault)
+	router.Post("/", vr.Handler.AddVault)
 	router.Get("/", vr.Handler.GetAllVaults)
 }

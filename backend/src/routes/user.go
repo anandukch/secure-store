@@ -21,5 +21,4 @@ func (ur *UserRouter) Register(app fiber.Router) {
 	router.Get("/profile", ur.AuthMiddleware.Middleware, ur.Handler.GetUserProfile)
 	router.Get("/", ur.Handler.GetAllUsers)
 	router.Get("/:id", ur.Handler.GetUserById)
-	router.Post("/", ur.Handler.CreateUser)
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"pass-saver/src/config"
 	"pass-saver/src/handler"
 	"pass-saver/src/pkg/models"
 	"pass-saver/src/pkg/response"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AuthHandler struct {
@@ -35,18 +35,18 @@ func (ac *AuthHandler) CreateUser(c *fiber.Ctx) error {
 			"error": validationErr.Error(),
 		})
 	}
-	newUser := models.User{
-		Id:       primitive.NewObjectID(),
-		Name:     user.Name,
-		Email:    user.Email,
-	}
 
-	result, err := ac.UserService.CreateUser(c, newUser)
+	_, err := ac.UserService.CreateUser(c, &user)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
 
-	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
+	token, err := handler.GenerateJwtToken(user.Email)
+	if err != nil {
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
+	}
+
+	return response.JSONResponse(c, http.StatusCreated, "User created successfully", token)
 }
 
 func (ctrl *AuthHandler) SignIn(c *fiber.Ctx) error {
@@ -68,7 +68,7 @@ func (ctrl *AuthHandler) SignIn(c *fiber.Ctx) error {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid email")
 	}
 
-	token, err := handler.GenerateJwtToken(user.Id.Hex(), user.Email)
+	token, err := handler.GenerateJwtToken(user.Email)
 	if err != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", err.Error())
 	}
@@ -76,5 +76,12 @@ func (ctrl *AuthHandler) SignIn(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "User logged in", &fiber.Map{
 		"token": token,
 	})
+
+}
+
+func (ctrl *AuthHandler) SendOtp(c *fiber.Ctx) error {
+
+	config.SendMail()
+	return response.JSONResponse(c, http.StatusOK, "success", "OTP sent successfully")
 
 }
