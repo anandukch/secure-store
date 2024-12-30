@@ -51,7 +51,7 @@ browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: 
     }
     if (msg.action === "login") {
         console.log("login", msg);
-    
+
         const url = new URL(msg.payload?.url as string);
         const urlParts = url.hostname.split("/");
         console.log("domain", urlParts[0]);
@@ -61,12 +61,10 @@ browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: 
         };
         console.log("login", globalState);
         response({ message: "login  reposne from background" });
-
     }
 
     if (msg.action === "check_credentials") {
         console.log("check_credentials", msg);
         response({ message: "success  check_credentails" });
     }
-
 });

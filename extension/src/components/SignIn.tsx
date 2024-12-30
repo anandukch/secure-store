@@ -1,27 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { LogIn, X } from "lucide-react";
 import "../index.css";
+import { LoadingSpinner } from "./LoadingSpinner";
 interface LoginPopupProps {
     authType: "login" | "signup";
     onSubmit: (email: string, password: string) => void;
     onCancel: () => void;
     onSignupClick: (type: "login" | "signup") => void;
+    loading?: boolean;
 }
 
-export function AuthPopup({ authType, onSubmit, onCancel, onSignupClick }: LoginPopupProps) {
+export function AuthPopup({ authType, onSubmit, onCancel, onSignupClick, loading }: LoginPopupProps) {
     const title = authType === "login" ? "Sign In" : "Sign Up";
-    const [loading, setLoading] = React.useState(false);
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [confirmPassword, setConfirmPassword] = React.useState("");
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+
         if (authType === "signup" && password !== confirmPassword) {
             alert("Passwords do not match");
-            setLoading(false);
             return;
         }
+
         onSubmit(email, password);
     };
 
@@ -90,15 +92,23 @@ export function AuthPopup({ authType, onSubmit, onCancel, onSignupClick }: Login
                         <button
                             type="button"
                             onClick={onCancel}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-75 disabled:cursor-not-allowed flex items-center space-x-2"
                         >
                             Cancel
                         </button>
                         <button
+                            disabled={loading}
                             type="submit"
-                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-75 disabled:cursor-not-allowed flex items-center space-x-2"
                         >
-                            Sign In
+                            {loading ? (
+                                <>
+                                    <LoadingSpinner />
+                                    <span>Signing In...</span>
+                                </>
+                            ) : (
+                                <span>{authType === "login" ? "Sign In" : "Sign Up"}</span>
+                            )}
                         </button>
                     </div>
                 </form>

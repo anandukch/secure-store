@@ -99,7 +99,7 @@
 //     );
 // }
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
 
 interface ProjectSelectorProps {
@@ -130,7 +130,7 @@ export function ProjectSelector({ selected, onChange }: ProjectSelectorProps) {
                 style={{
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    color: "#374151", // Gray-700 equivalent
+                    color: "#374151",
                 }}
             >
                 Project
@@ -141,7 +141,7 @@ export function ProjectSelector({ selected, onChange }: ProjectSelectorProps) {
                     style={{
                         width: "100%",
                         backgroundColor: "white",
-                        border: "1px solid #D1D5DB", // Gray-300 equivalent
+                        border: "1px solid #D1D5DB",
                         borderRadius: "0.375rem",
                         padding: "8px 12px",
                         textAlign: "left",
@@ -164,9 +164,9 @@ export function ProjectSelector({ selected, onChange }: ProjectSelectorProps) {
                             marginTop: "4px",
                             width: "100%",
                             backgroundColor: "white",
-                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Shadow-lg equivalent
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                             borderRadius: "0.375rem",
-                            border: "1px solid #E5E7EB", // Gray-200 equivalent
+                            border: "1px solid #E5E7EB",
                             padding: "4px 0",
                         }}
                     >
@@ -198,7 +198,7 @@ export function ProjectSelector({ selected, onChange }: ProjectSelectorProps) {
                             <div
                                 style={{
                                     padding: "8px 12px",
-                                    borderTop: "1px solid #F3F4F6", // Gray-100 equivalent
+                                    borderTop: "1px solid #F3F4F6",
                                     display: "flex",
                                     gap: "8px",
                                 }}
@@ -212,7 +212,7 @@ export function ProjectSelector({ selected, onChange }: ProjectSelectorProps) {
                                         flex: 1,
                                         padding: "4px 8px",
                                         fontSize: "0.875rem",
-                                        border: "1px solid #D1D5DB", // Gray-300 equivalent
+                                        border: "1px solid #D1D5DB",
                                         borderRadius: "0.375rem",
                                     }}
                                 />
@@ -222,12 +222,12 @@ export function ProjectSelector({ selected, onChange }: ProjectSelectorProps) {
                                         padding: "4px 12px",
                                         fontSize: "0.875rem",
                                         color: "white",
-                                        backgroundColor: "#4F46E5", // Indigo-600 equivalent
+                                        backgroundColor: "#4F46E5",
                                         borderRadius: "0.375rem",
                                         border: "none",
                                         cursor: "pointer",
                                     }}
-                                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4338CA")} // Indigo-700 equivalent
+                                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4338CA")}
                                     onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#4F46E5")}
                                 >
                                     Add
@@ -239,15 +239,15 @@ export function ProjectSelector({ selected, onChange }: ProjectSelectorProps) {
                                     width: "100%",
                                     padding: "8px 16px",
                                     fontSize: "0.875rem",
-                                    color: "#4F46E5", // Indigo-600 equivalent
+                                    color: "#4F46E5",
                                     display: "flex",
                                     alignItems: "center",
                                     gap: "8px",
                                     backgroundColor: "white",
-                                    borderTop: "1px solid #F3F4F6", // Gray-100 equivalent
+                                    borderTop: "1px solid #F3F4F6",
                                     cursor: "pointer",
                                 }}
-                                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#E0E7FF")} // Indigo-50 equivalent
+                                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#E0E7FF")}
                                 onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "white")}
                                 onClick={() => setIsAddingProject(true)}
                             >

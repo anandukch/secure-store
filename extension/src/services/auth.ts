@@ -1,7 +1,7 @@
 import zxcvbn from "zxcvbn";
 
 import { BaseService } from "./base";
-import { login } from "../axios";
+import { login, signup } from "../axios";
 
 export interface UserAttributesType {
     encryptedData: string;
@@ -48,15 +48,20 @@ export class AuthService extends BaseService {
             throw new Error("Passwords do not match");
         }
 
-        const strength = AuthService.checkPasswordStrength(password);
-        if (strength.score < 3) {
-            throw new Error("Password is too weak");
-        }
+        // const strength = AuthService.checkPasswordStrength(password);
+        // if (strength.score < 3) {
+        //     throw new Error("Password is too weak");
+        // }
 
         const worker = await this.checkHealth();
+        console.log("started registration");
 
         const masterKey = await worker.generateEncryptionKey();
+        console.log("Master key generated");
+
         const kekSalt = await worker.generateSaltToDeriveKey();
+        console.log("KEK salt generated");
+
         const kek = await worker.deriveSensitiveKey(password, kekSalt);
         const masterKeyEncryptedWithKek = await worker.encryptBoxB64(masterKey, kek.key);
 
@@ -69,9 +74,9 @@ export class AuthService extends BaseService {
         const requestBody = {
             email: email,
             name: name,
-            encryptedData: masterKeyEncryptedWithKek.encryptedData,
-            nonce: masterKeyEncryptedWithKek.nonce,
-            salt: kekSalt,
+            encrypedMasterKey: masterKeyEncryptedWithKek.encryptedData,
+            keyDecryptionNonce: masterKeyEncryptedWithKek.nonce,
+            keyDecryptionSalt: kekSalt,
             kekOpsLimit: kek.opsLimit,
             kekMemLimit: kek.memLimit,
             publicKey: publicKey,
@@ -81,6 +86,10 @@ export class AuthService extends BaseService {
 
         // to be sent to backend
         console.log("Registration data:", requestBody);
+
+        signup(requestBody).then((res) => {
+            console.log("Registration response:", res);
+        });
 
         // console.log("Encrypted data:", encryptedData);
     }

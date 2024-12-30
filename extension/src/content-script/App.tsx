@@ -3,35 +3,17 @@ import browser from "webextension-polyfill";
 import { SaveCredentialsPopup } from "./components/save-credentials/SaveCredentialsPopup";
 import { useSuggestionBox } from "../hooks/useSuggestionBox";
 import { SuggestionBox } from "./components/suggestions/SuggestionBox";
-// import Confirmation from "./components/Confirmation";
+import { browserService } from "../services/browser";
 
 function App() {
     const [showPopup, setShowPopup] = useState(false);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const createSuggestionBox = (field: HTMLInputElement) => {
-    //     const suggestionDiv = document.createElement("div");
-    //     suggestionDiv.style.width = `${field.offsetWidth}px`;
-    //     suggestionDiv.style.height = "50px";
-    //     suggestionDiv.style.position = "absolute";
-    //     suggestionDiv.style.top = `${field.offsetTop + field.offsetHeight}px`;
-    //     suggestionDiv.style.left = `${field.offsetLeft}px`;
-    //     suggestionDiv.style.zIndex = "1000";
-    //     suggestionDiv.style.border = "1px solid black";
-    //     suggestionDiv.style.display = "none";
-    //     suggestionDiv.style.textAlign = "center";
-    //     suggestionDiv.style.color = "black";
-    //     suggestionDiv.style.fontWeight = "bold";
-    //     suggestionDiv.style.fontSize = "12px";
-    //     suggestionDiv.style.padding = "5px";
-    //     suggestionDiv.style.borderRadius = "5px";
-    //     suggestionDiv.style.display = "block";
-    //     suggestionDiv.innerText = "Suggestion";
-    //     field.parentNode?.appendChild(suggestionDiv);
-    // };
-
     useEffect(() => {
-        // console.log("App mounted");
+        const storedShowPopup = sessionStorage.getItem("showPopup");
+        if (storedShowPopup) {
+            setShowPopup(true);
+        }
+
         browser.runtime.sendMessage({
             action: "mount",
             payload: {
@@ -67,7 +49,6 @@ function App() {
             //     console.log("response", response);
             // });
 
-        
             const inputFields = document.querySelectorAll("input");
 
             inputFields.forEach((field) => {
@@ -101,18 +82,12 @@ function App() {
                 console.log(event.target.innerHTML);
 
                 setShowPopup(true);
-                console.log("login payload", {
-                    url: window.location.href,
-                    fieldInfo,
-                });
+                sessionStorage.setItem("showPopup", "true");
 
-                browser.runtime
-                    .sendMessage({
-                        action: "login",
-                        payload: {
-                            fieldInfo,
-                            url: window.location.href,
-                        },
+                browserService
+                    .sendLoginMessage({
+                        url: window.location.href,
+                        fieldInfo,
                     })
                     .then((response) => {
                         console.log("Response from background script:", response);
@@ -130,7 +105,6 @@ function App() {
                     action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
                 };
 
-                // console.log("Field information:", fieldInfo);
                 browser.runtime
                     .sendMessage({
                         action: "form_interaction",
@@ -161,18 +135,16 @@ function App() {
 
     const handleSave = () => {
         console.log("Saving credentials...");
-        // Add your save logic here
     };
 
     const handleCancel = () => {
+        sessionStorage.removeItem("showPopup");
         console.log("Cancelled saving credentials");
         setShowPopup(false);
-        // Add your cancel logic here
     };
 
     const { showSuggestions, inputRect, handleSelect, closeSuggestions } = useSuggestionBox();
 
-    // Demo stored credentials
     const storedCredentials = [
         {
             username: "demo@example.com",
@@ -185,7 +157,6 @@ function App() {
             url: "https://test.com",
         },
     ];
-    // return <>{showConfirmation && <Confirmation handleConfirm={() => setShowConfirmation(false)} />}</>;
     return (
         <>
             <div style={{}}>

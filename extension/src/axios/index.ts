@@ -3,7 +3,7 @@ import { SignUpType } from "../types";
 
 const api: AxiosInstance = axios.create({
     // baseURL: process.env.NEXT_PUBLIC_API_URL,
-    baseURL: "http://localhost:5000",
+    baseURL: "http://localhost:5050/api",
     timeout: 10000,
     headers: {
         Accept: "application/json",
@@ -53,6 +53,6 @@ api.interceptors.response.use(
 
 // export const logout = () => api.post("/users/auth/signout", {}, { withCredentials: true });
 
-export const signup = (data: SignUpType) => api.post("/auth/signup", data);
-export const login = (data: SignUpType) => api.post("/auth/login", data);
+export const signup = (data: any) => api.post("/auth/signup", data);
+export const login = (data: any) => api.post("/auth/login", data);
 export default api;
