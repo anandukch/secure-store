@@ -1,36 +1,36 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 
 jobs:
-  lint-and-build:
-    name: Lint and Build
-    runs-on: ubuntu-latest
+    lint-and-build:
+        name: Lint and Build
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
 
-      - name: Install Node.js
-        uses: actions/setup-node@v2
+            - name: Install Node.js
+              uses: actions/setup-node@v2
 
-      - name: Install node dependencies
-        run: cd extension && npm install
-      
-      - name: Install go dependencies
-        run: cd backend && go mod download
+            - name: Install node dependencies
+              run: cd extension && npm install
 
-      # - name: Lint Code
-      #   run: npm run lint:backend
+            - name: Install go dependencies
+              run: cd backend && go mod download
 
-      - name: Build backend
-        run: npm run build:backend
+            # - name: Lint Code
+            #   run: npm run lint:backend
 
-      # - name: Lint extension
-      #   run: npm run lint:ext
+            - name: Build backend
+              run: npm run build:backend
 
-      - name: Build extension
-        run: npm run build:ext
+            # - name: Lint extension
+            #   run: npm run lint:ext
+
+            - name: Build extension
+              run: npm run build:ext

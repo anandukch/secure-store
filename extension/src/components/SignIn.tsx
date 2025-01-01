@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { LogIn, X } from "lucide-react";
 import "../index.css";
 import { LoadingSpinner } from "./LoadingSpinner";

@@ -35,7 +35,6 @@
 //     );
 // }
 
-
 import { KeyRound, Settings, ExternalLink, Plus } from "lucide-react";
 
 interface CredentialStatsProps {
@@ -83,4 +82,3 @@ export function CredentialStats({ totalCredentials, onManageClick, onSettingsCli
         </div>
     );
 }
-
