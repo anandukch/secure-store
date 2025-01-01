@@ -44,7 +44,6 @@ export async function deriveSensitiveKey(passphrase: string, salt: string) {
                 opsLimit,
                 memLimit,
             };
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
             opsLimit *= 2;
             memLimit /= 2;
@@ -144,7 +143,6 @@ export const decryptChaCha = async (data: Uint8Array, header: Uint8Array, key: s
         const buffer = data.slice(bytesRead, bytesRead + chunkSize);
         const pullResult = sodium.crypto_secretstream_xchacha20poly1305_pull(pullState, buffer);
         // TODO:
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!pullResult.message) {
             throw new Error("failed");
         }

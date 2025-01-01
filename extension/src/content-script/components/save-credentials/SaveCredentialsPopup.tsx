@@ -13,7 +13,7 @@ interface SaveCredentialsPopupProps {
     onCancel: () => void;
 }
 
-export function SaveCredentialsPopup({ username, password, url, onSave, onCancel }: SaveCredentialsPopupProps) {
+export function SaveCredentialsPopup({ username, password, url, onCancel }: SaveCredentialsPopupProps) {
     const [selectedProject, setSelectedProject] = useState("Personal");
     const [usernameToSave, setUsername] = useState(username);
     const [passwordToSave, setPassword] = useState(password);

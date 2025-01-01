@@ -33,7 +33,7 @@ module.exports = {
         "plugin:react-hooks/recommended",
         "plugin:prettier/recommended",
     ],
-    ignorePatterns: ["dist", ".eslintrc.cjs","node_modules"],
+    ignorePatterns: ["dist", ".eslintrc.cjs", "node_modules"],
     parser: "@typescript-eslint/parser",
     plugins: ["react-refresh"],
     rules: {

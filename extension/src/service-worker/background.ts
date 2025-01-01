@@ -4,7 +4,7 @@ import browser from "webextension-polyfill";
 //     }
 // );
 
-type ResponseCallback = (data: object) => void;
+// type ResponseCallback = (data: object) => void;
 
 // async function handleMessage({ action }: MessageInterface, response: ResponseCallback) {
 //     if (action === "fetch") {
@@ -25,7 +25,7 @@ type GlobalState = {
     showPopup: boolean;
 };
 
-type PayloadType = object | string | number | boolean | null | undefined;
+// type PayloadType = object | string | number | boolean | null | undefined;
 
 type MessageInterface = {
     action: string;
