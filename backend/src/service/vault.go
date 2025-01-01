@@ -44,6 +44,7 @@ func (v *VaultService) CreateVault(c context.Context, vault models.Vault) (*mong
 func (v *VaultService) AddVault(c context.Context, userId primitive.ObjectID, vaultRequest *schemas.VaultRequest) (*mongo.InsertOneResult, error) {
 	vault := models.Vault{
 		UserID:                   userId.Hex(),
+		SiteUrl:                  vaultRequest.SiteUrl,
 		EncryptedKey:             vaultRequest.EncryptedKey,
 		KeyDecryptionNonce:       vaultRequest.KeyDecryptionNonce,
 		EncryptedMetadata:        vaultRequest.EncryptedMetadata,
