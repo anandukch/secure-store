@@ -1,6 +1,7 @@
 import { LogIn, X } from "lucide-react";
 import "../index.css";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { FormEvent, useState } from "react";
 interface LoginPopupProps {
     authType: "login" | "signup";
     onSubmit: (email: string, password: string) => void;
@@ -11,11 +12,11 @@ interface LoginPopupProps {
 
 export function AuthPopup({ authType, onSubmit, onCancel, onSignupClick, loading }: LoginPopupProps) {
     const title = authType === "login" ? "Sign In" : "Sign Up";
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [confirmPassword, setConfirmPassword] = React.useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
         if (authType === "signup" && password !== confirmPassword) {
