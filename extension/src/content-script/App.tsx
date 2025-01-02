@@ -51,16 +51,16 @@ function App() {
 
             const inputFields = document.querySelectorAll("input");
 
-            inputFields.forEach((field) => {
-                if (field.type.includes("email") || field.name === "username") {
-                    // createSuggestionBox(field);
-                    field.value = "username";
-                }
-                if (field.type === "password") {
-                    // createSuggestionBox(field);
-                    field.value = "password";
-                }
-            });
+            // inputFields.forEach((field) => {
+            //     if (field.type.includes("email") || field.name === "username") {
+            //         // createSuggestionBox(field);
+            //         field.value = "username";
+            //     }
+            //     if (field.type === "password") {
+            //         // createSuggestionBox(field);
+            //         field.value = "password";
+            //     }
+            // });
         }
 
         const handleUserInteraction = (event: any) => {

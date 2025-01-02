@@ -16,7 +16,6 @@ interface SuggestionBoxProps {
 
 export function SuggestionBox({ credentials, inputRect, onSelect, onClose }: SuggestionBoxProps) {
     const boxRef = useRef<HTMLDivElement>(null);
-    console.log("inputRect", inputRect);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
