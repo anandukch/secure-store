@@ -3,7 +3,6 @@ package middlewares
 import (
 	"net/http"
 	"pass-saver/src/handler"
-	"pass-saver/src/pkg/models"
 	"pass-saver/src/pkg/response"
 	"pass-saver/src/service"
 	"strings"
@@ -36,9 +35,9 @@ func (a *AuthMiddleWare) Middleware(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized in extraction of claims"})
 	}
-	var user models.User
 	// objId, _ := primitive.ObjectIDFromHex(claims["id"].(string)) // Perform type assertion
-	if _, err := a.UserService.GetUserByEmail(c.Context(), claims["email"].(string)); err != nil {
+	user, err := a.UserService.GetUserByEmail(c.Context(), claims["email"].(string)); 
+	if err != nil {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid credentials")
 	}
 	c.Locals("user", user)

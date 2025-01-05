@@ -58,10 +58,6 @@ func (ctrl *AuthHandler) SignIn(c *fiber.Ctx) error {
 		})
 	}
 
-	if request.Email == "" || request.Password == "" {
-		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Email and password are required")
-	}
-
 	var user *models.User
 	user, err := ctrl.UserService.GetUserByEmail(c.Context(), request.Email)
 	if err != nil {

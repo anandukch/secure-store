@@ -40,6 +40,8 @@ export class CryptoWorker {
     }
 
     async decryptBoxB64(box: EncryptedBox, key: BytesOrB64) {
+        console.log("decryptBoxB64", box, key);
+
         return crypto.decryptBoxB64(box, key);
     }
 

@@ -6,7 +6,7 @@ type User struct {
 	Id                  primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name                string             `json:"name" bson:"name"`
 	Email               string             `json:"email" bson:"email"`
-	EncrypedMasterKey   string             `json:"encrypedMasterKey" bson:"encrypedMasterKey"`
+	EncryptedMasterKey   string             `json:"encryptedMasterKey" bson:"encrypedMasterKey"`
 	KeyDecryptionNonce  string             `json:"keyDecryptionNonce" bson:"keyDecryptionNonce"`
 	KeyDecryptionSalt   string             `json:"keyDecryptionSalt" bson:"keyDecryptionSalt"`
 	KekOpsLimit         int                `json:"kekOpsLimit" bson:"kekOpsLimit"`

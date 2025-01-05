@@ -54,4 +54,6 @@ api.interceptors.response.use(
 
 export const signup = (data: any) => api.post("/auth/signup", data);
 export const login = (data: any) => api.post("/auth/login", data);
+
+export const getUserAttributes = (data: any) => api.post("/users/attributes", data);
 export default api;

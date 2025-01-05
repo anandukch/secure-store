@@ -40,7 +40,7 @@ func (u *UserService) CreateUser(c *fiber.Ctx, user *schemas.CreateUser) (*mongo
 		Id:                  primitive.NewObjectID(),
 		Name:                user.Name,
 		Email:               user.Email,
-		EncrypedMasterKey:   user.EncrypedMasterKey,
+		EncryptedMasterKey:   user.EncryptedMasterKey,
 		KeyDecryptionNonce:  user.KeyDecryptionNonce,
 		KeyDecryptionSalt:   user.KeyDecryptionSalt,
 		KekOpsLimit:         user.KekOpsLimit,

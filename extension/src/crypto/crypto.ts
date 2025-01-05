@@ -97,6 +97,8 @@ export const encryptBoxB64 = async (data: BytesOrB64, key: BytesOrB64): Promise<
 
 export const decryptBox = async ({ encryptedData, nonce }: EncryptedBox, key: BytesOrB64) => {
     await sodium.ready;
+    console.log(encryptedData, nonce, key, "from decryptBox");
+
     const k = sodium.crypto_secretbox_open_easy(await bytes(encryptedData), await bytes(nonce), await bytes(key));
     return k;
     // const decoder = new TextDecoder('utf-8');

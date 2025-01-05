@@ -7,6 +7,8 @@ import { CredentialStats } from "./components/CredentialStats";
 import { RecoveryKeyPopup } from "./components/RecoveryKeyPop";
 import { OTPVerificationPopup } from "./components/OTPVerificationPopup";
 import { authService } from "./services/auth";
+import { browserService } from "./services/browser";
+import { StorageEnum } from "./common/enum";
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +25,27 @@ function App() {
         browser.runtime.onMessage.addListener((msg) => {
             console.log(msg);
         });
+        // browserService.sendMessage({ action: "fetch" });
+        browserService.getData("token", StorageEnum.LOCAL).then((res) => {
+            console.log("Token", res);
+
+            if (res?.token) {
+                console.log("Token found", res.token);
+
+                browserService.getData("masterKey", StorageEnum.LOCAL).then((res) => {
+                    console.log("User attributes", res);
+
+                    if (res?.masterKey) {
+                        setOpenAuthPopup(false);
+                        setOpenCredentialsStat(true);
+                    } else {
+                        browserService.removeData("token", StorageEnum.LOCAL);
+                        browserService.removeData("masterKey", StorageEnum.LOCAL);
+                        setOpenAuthPopup(true);
+                    }
+                });
+            }
+        });
         return () => {
             console.log("App unmounted");
         };
@@ -32,6 +55,33 @@ function App() {
         console.log("Logging in...", { email, password });
 
         setIsLoading(true);
+        console.log(authType);
+
+        if (authType === "login") {
+            authService
+                .initLogin(email, password)
+                .then((userAttributes) => {
+                    console.log("login", userAttributes);
+                    authService.completeLogin(email).then((res) => {
+                        console.log("complete login", res);
+                        if (res.token)
+                            browserService.sendLoginMessage({
+                                token: res.token,
+                                email: userAttributes.data.email,
+                                name: userAttributes.data.name,
+                                masterKey: userAttributes.masterKey,
+                            });
+                        setIsLoading(false);
+                        setOpenAuthPopup(false);
+                        setOpenCredentialsStat(true);
+                    });
+                })
+                .catch((err) => {
+                    setIsLoading(false);
+                    console.log(err);
+                });
+            return;
+        }
         authService
             .register("name", email, password, password)
             .then((res) => {

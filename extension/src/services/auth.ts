@@ -1,14 +1,20 @@
 import zxcvbn from "zxcvbn";
 
 import { BaseService } from "./base";
-import { login, signup } from "../axios";
+import { getUserAttributes, login, signup } from "../axios";
 
 export interface UserAttributesType {
-    encryptedData: string;
-    nonce: string;
-    salt: string;
-    kekOpsLimit: number;
+    email: string;
+    encryptedMasterKey: string;
+    encryptedPrivateKey: string;
     kekMemLimit: number;
+    kekOpsLimit: number;
+    keyDecryptionNonce: string;
+    keyDecryptionSalt: string;
+    name: string;
+    publicKey: string;
+    recoveryCode: string | null;
+    _id: string;
 }
 
 export interface User {
@@ -19,24 +25,37 @@ export interface User {
 }
 
 export type LoginResponse = {
-    user: User;
+    token: string;
 } & UserAttributesType;
 export class AuthService extends BaseService {
     public async initLogin(email: string, password: string) {
         const worker = await this.checkHealth();
-        const res = await login({ email, password });
+        const res = await getUserAttributes({ email });
         const { data }: { data: UserAttributesType } = res.data;
+        console.log(data.encryptedMasterKey);
+        console.log("User attributes:", data);
 
-        const key = await worker.deriveKey(password, data.salt, data.kekOpsLimit, data.kekMemLimit);
+        const key = await worker.deriveKey(password, data.keyDecryptionSalt, data.kekOpsLimit, data.kekMemLimit);
+        console.log("Derived key:", key);
+        console.log(password);
+
         const masterKey = await worker.decryptBoxB64(
             {
-                encryptedData: data.encryptedData,
-                nonce: data.nonce,
+                encryptedData: data.encryptedMasterKey,
+                nonce: data.keyDecryptionNonce,
             },
             key,
         );
 
         return { masterKey, data };
+    }
+
+    public async completeLogin(email: string) {
+        const res = await login({ email });
+        console.log(res);
+
+        const { data }: { data: LoginResponse } = res.data;
+        return data;
     }
 
     public static checkPasswordStrength(password: string) {
@@ -74,7 +93,7 @@ export class AuthService extends BaseService {
         const requestBody = {
             email: email,
             name: name,
-            encrypedMasterKey: masterKeyEncryptedWithKek.encryptedData,
+            encryptedMasterKey: masterKeyEncryptedWithKek.encryptedData,
             keyDecryptionNonce: masterKeyEncryptedWithKek.nonce,
             keyDecryptionSalt: kekSalt,
             kekOpsLimit: kek.opsLimit,

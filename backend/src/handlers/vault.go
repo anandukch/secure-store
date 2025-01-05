@@ -33,7 +33,7 @@ func (ctrl *VaultHandler) GetVault(c *fiber.Ctx) error {
 }
 
 func (ctrl *VaultHandler) AddVault(c *fiber.Ctx) error {
-	user := c.Locals("user").(models.User)
+	user := c.Locals("user").(*models.User)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var vault schemas.VaultRequest
 	defer cancel()

@@ -1,4 +1,6 @@
 import browser from "webextension-polyfill";
+import { ActionEnum, StorageEnum } from "../common/enum";
+import { browserService } from "../services/browser";
 // browser.runtime.onMessage.addListener((msg) => {
 //     console.log(msg);
 //     }
@@ -21,8 +23,10 @@ import browser from "webextension-polyfill";
 // }
 
 type GlobalState = {
-    url: string;
-    showPopup: boolean;
+    url?: string;
+    showPopup?: boolean;
+    token?: string;
+    userAttributes?: any;
 };
 
 // type PayloadType = object | string | number | boolean | null | undefined;
@@ -49,16 +53,19 @@ browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: 
                 });
         }
     }
-    if (msg.action === "login") {
+    if (msg.action === ActionEnum.LOGIN) {
         console.log("login", msg);
-
-        const url = new URL(msg.payload?.url as string);
-        const urlParts = url.hostname.split("/");
-        console.log("domain", urlParts[0]);
+        // const url = new URL(msg.payload?.url as string);
+        // const urlParts = url.hostname.split("/");
+        // console.log("domain", urlParts[0]);
         globalState = {
-            url: urlParts[0],
-            showPopup: true,
+            token: msg.payload.token,
+            userAttributes: msg.payload.userAttributes,
         };
+        browserService.storeData(msg.payload, StorageEnum.LOCAL).then(() => {
+            console.log("Data stored");
+        });
+
         console.log("login", globalState);
         response({ message: "login  reposne from background" });
     }

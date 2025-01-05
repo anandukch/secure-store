@@ -5,6 +5,7 @@ import (
 	"pass-saver/src/common"
 	"pass-saver/src/pkg/models"
 	"pass-saver/src/pkg/response"
+	"pass-saver/src/pkg/schemas"
 	"pass-saver/src/service"
 
 	"github.com/gofiber/fiber/v2"
@@ -69,12 +70,30 @@ func (uc *UserHandler) GetUserById(c *fiber.Ctx) error {
 // 	return response.JSONResponse(c, http.StatusCreated, "User created successfully", result)
 // }
 
-func (uc *UserHandler) GetAllUsers(c *fiber.Ctx) error {
-	users, err := uc.UserService.GetAllUsers(c)
-	if err != nil {
-		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
+// func (uc *UserHandler) GetAllUsers(c *fiber.Ctx) error {
+// 	users, err := uc.UserService.GetAllUsers(c)
+// 	if err != nil {
+// 		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
+// 	}
+
+// 	return response.JSONResponse(c, http.StatusOK, "success", users)
+
+// }
+
+func (uc *UserHandler) GetUserByEmail(c *fiber.Ctx) error {
+	var request *schemas.UserEmail
+
+	if err := c.BodyParser(&request); err != nil {
+		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", &fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	return response.JSONResponse(c, http.StatusOK, "success", users)
+	user, err := uc.UserService.GetUserByEmail(c.Context(), request.Email)
+	if err != nil {
+		return response.JSONResponse(c, http.StatusNotFound, "error", err.Error())
+	}
+
+	return response.JSONResponse(c, http.StatusOK, "success", *user)
 
 }
