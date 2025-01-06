@@ -47,6 +47,14 @@ class BrowserService {
             await browser.storage.session.remove(key);
         }
     }
+
+    public async removeAllData(storageType: StorageEnum) {
+        if (storageType === StorageEnum.LOCAL) {
+            await browser.storage.local.clear();
+        } else if (storageType === StorageEnum.SESSION) {
+            await browser.storage.session.clear();
+        }
+    }
 }
 
 export const browserService = new BrowserService();

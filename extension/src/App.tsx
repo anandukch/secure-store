@@ -59,22 +59,13 @@ function App() {
 
         if (authType === "login") {
             authService
-                .initLogin(email, password)
-                .then((userAttributes) => {
-                    console.log("login", userAttributes);
-                    authService.completeLogin(email).then((res) => {
-                        console.log("complete login", res);
-                        if (res.token)
-                            browserService.sendLoginMessage({
-                                token: res.token,
-                                email: userAttributes.data.email,
-                                name: userAttributes.data.name,
-                                masterKey: userAttributes.masterKey,
-                            });
-                        setIsLoading(false);
-                        setOpenAuthPopup(false);
-                        setOpenCredentialsStat(true);
-                    });
+                .loginUser({ email, password })
+                .then((res) => {
+                    console.log("response login", res);
+                    browserService.sendLoginMessage(res);
+                    setIsLoading(false);
+                    setOpenAuthPopup(false);
+                    setOpenCredentialsStat(true);
                 })
                 .catch((err) => {
                     setIsLoading(false);
@@ -113,6 +104,7 @@ function App() {
     };
 
     const handleAddClick = () => {
+        browserService.removeAllData(StorageEnum.LOCAL);
         console.log("Add clicked");
     };
 

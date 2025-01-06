@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import { ActionEnum, StorageEnum } from "../common/enum";
 import { browserService } from "../services/browser";
+import { authService } from "../services/auth";
 // browser.runtime.onMessage.addListener((msg) => {
 //     console.log(msg);
 //     }
@@ -38,7 +39,7 @@ type MessageInterface = {
 
 let globalState: GlobalState;
 
-browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: any) => {
+browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, response: any) => {
     if (msg.action === "mount") {
         console.log("mount", msg.payload!.url!);
 
@@ -53,6 +54,7 @@ browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: 
                 });
         }
     }
+
     if (msg.action === ActionEnum.LOGIN) {
         console.log("login", msg);
         // const url = new URL(msg.payload?.url as string);
@@ -73,5 +75,45 @@ browser.runtime.onMessage.addListener((msg: MessageInterface, sender, response: 
     if (msg.action === "check_credentials") {
         console.log("check_credentials", msg);
         response({ message: "success  check_credentails" });
+    }
+
+    // if (msg.action === ActionEnum.LOGIN) {
+    //     console.log("login", msg);
+    //     const { email, password } = msg.payload;
+    //     const userAttributes = await authService.initLogin(email, password);
+    //     console.log("User attributes:", userAttributes);
+
+    //     if (!userAttributes) {
+    //         response({ message: "error" });
+    //         return;
+    //     }
+
+    //     console.log("User attributes:", userAttributes);
+
+    //     const data = await authService.completeLogin(email);
+    //     if (!data) {
+    //         response({ message: "error" });
+    //         return;
+    //     }
+    //     console.log("complete login", data);
+
+    //     // globalState = {
+    //     //     token: msg.payload.token,
+    //     //     userAttributes: msg.payload.userAttributes,
+    //     // };
+    //     browserService.storeData(msg.payload, StorageEnum.LOCAL).then(() => {
+    //         console.log("Data stored");
+    //     });
+
+    //     console.log("login", globalState);
+    //     response({ message: "login  reposne from background" });
+    // }
+
+    if (msg.action === ActionEnum.LOG_OUT) {
+        console.log("logout", msg);
+        globalState = {};
+        browserService.removeData("token", StorageEnum.LOCAL);
+        browserService.removeData("masterKey", StorageEnum.LOCAL);
+        response({ message: "logout  reposne from background" });
     }
 });

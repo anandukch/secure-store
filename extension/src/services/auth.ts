@@ -58,6 +58,29 @@ export class AuthService extends BaseService {
         return data;
     }
 
+    public async loginUser({ email, password }: { email: string; password: string }) {
+        const userAttributes = await this.initLogin(email, password);
+        console.log("User attributes:", userAttributes);
+
+        if (!userAttributes) {
+            throw new Error("Error getting user attributes");
+        }
+
+        console.log("User attributes:", userAttributes);
+
+        const data = await this.completeLogin(email);
+        if (!data) {
+            throw new Error("Error completing login");
+        }
+        console.log("complete login", data);
+        return {
+            token: data.token,
+            email: userAttributes.data.email,
+            name: userAttributes.data.name,
+            masterKey: userAttributes.masterKey,
+        };
+    }
+
     public static checkPasswordStrength(password: string) {
         return zxcvbn(password);
     }

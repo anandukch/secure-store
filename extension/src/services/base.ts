@@ -17,10 +17,15 @@ export abstract class BaseService implements Initializable {
     }
 
     async checkHealth() {
+        console.log("Checking health...");
+        console.log(this.healthy);
+
         if (!this.healthy) {
             try {
                 await this.init();
-            } catch {
+            } catch (e) {
+                console.log("Failed to initialize service", e);
+
                 throw new Error("Service not initialized. Call `init` first.");
             }
         }
