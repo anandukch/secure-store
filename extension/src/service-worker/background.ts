@@ -2,6 +2,8 @@ import browser from "webextension-polyfill";
 import { ActionEnum, StorageEnum } from "../common/enum";
 import { browserService } from "../services/browser";
 import { authService } from "../services/auth";
+import { createVaults, getSecrets } from "../axios";
+import { vaultService } from "../services/vault";
 // browser.runtime.onMessage.addListener((msg) => {
 //     console.log(msg);
 //     }
@@ -115,5 +117,25 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
         browserService.removeData("token", StorageEnum.LOCAL);
         browserService.removeData("masterKey", StorageEnum.LOCAL);
         response({ message: "logout  reposne from background" });
+    }
+
+    if (msg.action === ActionEnum.FETCH_STATE) {
+        console.log("fetch state", globalState);
+        response({ message: "fetch state response from background", data: globalState });
+    }
+
+    if (msg.action === ActionEnum.FETCH_SECRETS) {
+        const { data } = await getSecrets();
+        console.log("fetch secrets", data);
+        response({ message: "fetch secrets response from background", data });
+    }
+
+    if (msg.action === ActionEnum.CREATE_SECRET) {
+        // const { data } = await createSecrets(msg.payload);
+        const data = await vaultService.createSecret(msg.payload);
+        const vaultResponse = await createVaults(data);
+
+        console.log("create secret", vaultResponse);
+        response({ message: "create secret response from background", data });
     }
 });

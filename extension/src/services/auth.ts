@@ -135,6 +135,11 @@ export class AuthService extends BaseService {
 
         // console.log("Encrypted data:", encryptedData);
     }
+
+    public async getMasterKeyFromLocalStorage() {
+        const masterKey = await this.checkHealth();
+        return masterKey;
+    }
 }
 
 export const authService = new AuthService();

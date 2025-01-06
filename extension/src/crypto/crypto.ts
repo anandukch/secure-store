@@ -312,6 +312,13 @@ export const encryptMetadataJSON = async (r: { jsonValue: unknown; keyB64: strin
     };
 };
 
+export const encryptMetadata = async (data: unknown, key: string) => {
+    return encryptMetadataJSON({
+        jsonValue: data,
+        keyB64: key,
+    });
+};
+
 export const _encryptMetadataJSON_New = (jsonValue: unknown, key: BytesOrB64) =>
     encryptBlobB64(new TextEncoder().encode(JSON.stringify(jsonValue)), key);
 

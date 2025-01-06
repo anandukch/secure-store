@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from "axios";
+import { VaultRequest } from "../services/vault";
 
 const api: AxiosInstance = axios.create({
     // baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -56,4 +57,10 @@ export const signup = (data: any) => api.post("/auth/signup", data);
 export const login = (data: any) => api.post("/auth/login", data);
 
 export const getUserAttributes = (data: any) => api.post("/users/attributes", data);
+export const createProject = (data: any) => api.post("/projects", data);
+export const getProjects = () => api.get("/projects");
+export const getProject = (id: string) => api.get(`/projects/${id}`);
+export const createVaults = (data: VaultRequest) => api.post("/vaults", data);
+export const getSecrets = () => api.get("/vaults");
+export const getSecret = (id: string) => api.get(`/vaults/${id}`);
 export default api;
