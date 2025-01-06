@@ -133,8 +133,17 @@ function App() {
         url: "https://example.com",
     };
 
-    const handleSave = () => {
-        console.log("Saving credentials...");
+    const handleSave = (data: any) => {
+        console.log("Saving credentials...", data);
+        browserService
+            .sendVaultCreationMessage(data)
+            .then((res) => {
+                console.log("Credentials saved", res);
+                setShowPopup(false);
+            })
+            .catch((err) => {
+                console.log("Error saving credentials", err);
+            });
     };
 
     const handleCancel = () => {

@@ -3,7 +3,8 @@ import { ActionEnum, StorageEnum } from "../common/enum";
 import { browserService } from "../services/browser";
 import { authService } from "../services/auth";
 import { createVaults, getSecrets } from "../axios";
-import { vaultService } from "../services/vault";
+import { VaultRequest, vaultService } from "../services/vault";
+import { fetchService } from "../services/fetch";
 // browser.runtime.onMessage.addListener((msg) => {
 //     console.log(msg);
 //     }
@@ -42,6 +43,8 @@ type MessageInterface = {
 let globalState: GlobalState;
 
 browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, response: any) => {
+    console.log("background message", msg);
+
     if (msg.action === "mount") {
         console.log("mount", msg.payload!.url!);
 
@@ -58,7 +61,7 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
     }
 
     if (msg.action === ActionEnum.LOGIN) {
-        console.log("login", msg);
+        console.log("login", msg.payload);
         // const url = new URL(msg.payload?.url as string);
         // const urlParts = url.hostname.split("/");
         // console.log("domain", urlParts[0]);
@@ -131,11 +134,28 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
     }
 
     if (msg.action === ActionEnum.CREATE_SECRET) {
-        // const { data } = await createSecrets(msg.payload);
-        const data = await vaultService.createSecret(msg.payload);
-        const vaultResponse = await createVaults(data);
+        console.log("create secret started", msg.payload);
 
-        console.log("create secret", vaultResponse);
-        response({ message: "create secret response from background", data });
+        // const { data } = await createSecrets(msg.payload);
+        const data = await vaultService.uploadSecret(msg.payload);
+        // console.log("token", await browserService.getData("token", StorageEnum.LOCAL));
+        console.log("create secer", data);
+
+        // await fetch("http://localhost:5050/api/vaults", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         Authorization: `Bearer ${(await browserService.getData("token", StorageEnum.LOCAL))?.token}`,
+        //     },
+        //     body: JSON.stringify(data),
+        // })
+        //     .then(async (res) => {
+        //         console.log(await res.json());
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
+
+        return response({ message: "create secret response from background", data });
     }
 });

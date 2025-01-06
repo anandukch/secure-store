@@ -55,6 +55,12 @@ class BrowserService {
             await browser.storage.session.clear();
         }
     }
+
+    public async sendVaultCreationMessage(data: any) {
+        console.log("vault service", data);
+
+        return await this.sendMessage({ action: ActionEnum.CREATE_SECRET, payload: data });
+    }
 }
 
 export const browserService = new BrowserService();

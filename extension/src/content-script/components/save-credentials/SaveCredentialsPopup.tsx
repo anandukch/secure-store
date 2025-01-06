@@ -9,11 +9,11 @@ interface SaveCredentialsPopupProps {
     username: string;
     password: string;
     url: string;
-    onSave: () => void;
+    onSave: (data: any) => void;
     onCancel: () => void;
 }
 
-export function SaveCredentialsPopup({ username, password, url, onCancel }: SaveCredentialsPopupProps) {
+export function SaveCredentialsPopup({ username, password, url, onCancel, onSave }: SaveCredentialsPopupProps) {
     const [selectedProject, setSelectedProject] = useState("Personal");
     const [usernameToSave, setUsername] = useState(username);
     const [passwordToSave, setPassword] = useState(password);
@@ -43,8 +43,14 @@ export function SaveCredentialsPopup({ username, password, url, onCancel }: Save
     };
 
     const handleSave = () => {
+        onSave({
+            siteUrl: url,
+            projectId: selectedProject,
+            secrets: { email: usernameToSave, password: passwordToSave, customFields },
+        });
         console.log(usernameToSave, passwordToSave, selectedProject, customFields);
     };
+
     return (
         <div
             style={{

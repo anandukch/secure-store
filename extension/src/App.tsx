@@ -20,6 +20,7 @@ function App() {
     const [recoveryKey, setRecoveryKey] = useState("");
 
     const [showOTPVerification, setShowOTPVerification] = useState(false);
+
     useEffect(() => {
         console.log("App mounted");
         browser.runtime.onMessage.addListener((msg) => {
@@ -62,10 +63,12 @@ function App() {
                 .loginUser({ email, password })
                 .then((res) => {
                     console.log("response login", res);
-                    browserService.sendLoginMessage(res);
-                    setIsLoading(false);
-                    setOpenAuthPopup(false);
-                    setOpenCredentialsStat(true);
+                    browserService.sendLoginMessage(res).then((response) => {
+                        console.log("response", response);
+                        setIsLoading(false);
+                        setOpenAuthPopup(false);
+                        setOpenCredentialsStat(true);
+                    });
                 })
                 .catch((err) => {
                     setIsLoading(false);

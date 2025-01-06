@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"pass-saver/src/pkg/models"
 	"pass-saver/src/pkg/response"
@@ -37,8 +38,10 @@ func (ctrl *VaultHandler) AddVault(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var vault schemas.VaultRequest
 	defer cancel()
+	fmt.Printf("User: %v", vault)
 
 	if err := c.BodyParser(&vault); err != nil {
+		print(err)
 		return c.Status(400).JSON(fiber.Map{
 			"message": "Invalid request",
 			"error":   err.Error(),
