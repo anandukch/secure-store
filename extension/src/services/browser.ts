@@ -2,8 +2,12 @@ import browser from "webextension-polyfill";
 import { ActionEnum, StorageEnum } from "../common/enum";
 
 class BrowserService {
+    extension: typeof browser;
+    constructor(extension: typeof browser = browser) {
+        this.extension = extension;
+    }
     public async openTab(url: string): Promise<void> {
-        await browser.tabs.create({ url });
+        await this.extension.tabs.create({ url });
     }
 
     public async sendMessage(message: any): Promise<any> {
@@ -11,56 +15,54 @@ class BrowserService {
     }
 
     public async sendMessageToTab(tabId: number, message: any): Promise<any> {
-        return await browser.tabs.sendMessage(tabId, message);
+        return await this.extension.tabs.sendMessage(tabId, message);
     }
 
     public async sendStatusMessage(message: any): Promise<void> {
-        await this.sendMessage({ action: ActionEnum.SET_STATE, payload: message });
+        return await this.sendMessage({ action: ActionEnum.SET_STATE, payload: message });
     }
 
     public async sendLoginMessage(data: any): Promise<void> {
-        await this.sendMessage({ action: ActionEnum.LOGIN, payload: data });
+        return await this.sendMessage({ action: ActionEnum.LOGIN, payload: data });
         // await this.storeData(token, StorageEnum.LOCAL);
         // await this.storeData(userAttributes, StorageEnum.SESSION);
     }
 
     public async storeData(data: any, storageType: StorageEnum) {
         if (storageType === StorageEnum.LOCAL) {
-            await browser.storage.local.set(data);
+            return await this.extension.storage.local.set(data);
         } else if (storageType === StorageEnum.SESSION) {
-            await browser.storage.session.set(data);
+            return await this.extension.storage.session.set(data);
         }
     }
 
     public async getData(key: string, storageType: StorageEnum) {
         if (storageType === StorageEnum.LOCAL) {
-            return await browser.storage.local.get(key);
+            return await this.extension.storage.local.get(key);
         } else if (storageType === StorageEnum.SESSION) {
-            return await browser.storage.session.get(key);
+            return await this.extension.storage.session.get(key);
         }
     }
 
     public async removeData(key: string, storageType: StorageEnum) {
         if (storageType === StorageEnum.LOCAL) {
-            await browser.storage.local.remove(key);
+            await this.extension.storage.local.remove(key);
         } else if (storageType === StorageEnum.SESSION) {
-            await browser.storage.session.remove(key);
+            await this.extension.storage.session.remove(key);
         }
     }
 
     public async removeAllData(storageType: StorageEnum) {
         if (storageType === StorageEnum.LOCAL) {
-            await browser.storage.local.clear();
+            await this.extension.storage.local.clear();
         } else if (storageType === StorageEnum.SESSION) {
-            await browser.storage.session.clear();
+            await this.extension.storage.session.clear();
         }
     }
 
     public async sendVaultCreationMessage(data: any) {
-        console.log("vault service", data);
-
         return await this.sendMessage({ action: ActionEnum.CREATE_SECRET, payload: data });
     }
 }
 
-export const browserService = new BrowserService();
+export const browserService = new BrowserService(browser);

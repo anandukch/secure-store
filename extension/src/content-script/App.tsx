@@ -14,24 +14,24 @@ function App() {
             setShowPopup(true);
         }
 
-        browser.runtime.sendMessage({
+        browserService.sendMessage({
             action: "mount",
             payload: {
                 url: window.location.href,
             },
         });
 
-        browser.runtime.onMessage.addListener((msg) => {
-            // console.log("mount", msg);
-            if (msg.action === "mount") {
-                if (msg.payload.globalState && msg.payload.globalState.showPopup) {
-                    console.log("Show confirmation");
-                }
-            }
+        // chrome.runtime.onMessage.addListener((msg) => {
+        //     // console.log("mount", msg);
+        //     if (msg.action === "mount") {
+        //         if (msg.payload.globalState && msg.payload.globalState.showPopup) {
+        //             console.log("Show confirmation");
+        //         }
+        //     }
 
-            return Promise.resolve("Got your message");
-        });
-        browser.runtime.sendMessage({ action: "check_credentials", payload: { url: window.location.href } }).then((response) => {
+        //     return Promise.resolve("Got your message");
+        // });
+        browserService.sendMessage({ action: "check_credentials", payload: { url: window.location.href } }).then((response) => {
             console.log("response message ", response);
         });
         // console.log("tested message ", a);
@@ -94,10 +94,10 @@ function App() {
                     });
             }
 
-            browser.runtime.sendMessage({
-                action: "form_interaction",
-                payload: event,
-            });
+            // browser.runtime.sendMessage({
+            //     action: "form_interaction",
+            //     payload: event,
+            // });
             if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
                 const fieldInfo = {
                     type: event.target.tagName,
@@ -105,14 +105,20 @@ function App() {
                     action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
                 };
 
-                browser.runtime
+                browserService
                     .sendMessage({
                         action: "form_interaction",
                         payload: fieldInfo,
                     })
                     .then((response) => {
                         console.log("Response from background script:", response);
+                    })
+                    .catch((err) => {
+                        console.log("Error sending message to background script:", err);
                     });
+                // .then((response) => {
+                //     console.log("Response from background script:", response);
+                // });
             }
         };
 

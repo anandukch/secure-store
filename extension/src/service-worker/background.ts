@@ -50,11 +50,10 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
 
         const url = new URL(msg.payload!.url! as string);
         const urlParts = url.hostname.split("/");
-        console.log("login", globalState);
 
         if (globalState && globalState.url === urlParts[0]) {
             sender.tab?.id &&
-                browser.tabs.sendMessage(sender.tab.id, { action: "mount", payload: { globalState } }).then((response) => {
+                chrome.tabs.sendMessage(sender.tab.id, { action: "mount", payload: { globalState } }).then((response) => {
                     console.log("response", response);
                 });
         }
@@ -80,6 +79,11 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
     if (msg.action === "check_credentials") {
         console.log("check_credentials", msg);
         response({ message: "success  check_credentails" });
+    }
+    if (msg.action === "form_interaction") {
+        console.log("form_interaction", msg);
+        response({ message: "success  form_interaction" });
+        return "fetch back";
     }
 
     // if (msg.action === ActionEnum.LOGIN) {
@@ -128,7 +132,7 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
     }
 
     if (msg.action === ActionEnum.FETCH_SECRETS) {
-        const { data } = await getSecrets();
+        const data = await vaultService.getSecretApi();
         console.log("fetch secrets", data);
         response({ message: "fetch secrets response from background", data });
     }
@@ -139,7 +143,6 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
         // const { data } = await createSecrets(msg.payload);
         const data = await vaultService.uploadSecret(msg.payload);
         // console.log("token", await browserService.getData("token", StorageEnum.LOCAL));
-        console.log("create secer", data);
 
         // await fetch("http://localhost:5050/api/vaults", {
         //     method: "POST",
@@ -155,7 +158,9 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
         //     .catch((err) => {
         //         console.log(err);
         //     });
+        console.log({ message: "create secret response from background", data });
 
-        return response({ message: "create secret response from background", data });
+        return { message: "create secret response from background", data };
     }
+    return true;
 });

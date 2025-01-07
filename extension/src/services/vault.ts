@@ -57,6 +57,9 @@ export class VaultService {
     private async createVaultApi(vaultRequest: VaultRequest) {
         return await fetchService.post(this.VAULT_ENDPOINT, vaultRequest);
     }
+    public async getSecretApi() {
+        return await fetchService.get(this.VAULT_ENDPOINT);
+    }
 }
 
 export const vaultService = new VaultService();

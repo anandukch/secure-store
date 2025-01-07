@@ -23,9 +23,9 @@ function App() {
 
     useEffect(() => {
         console.log("App mounted");
-        browser.runtime.onMessage.addListener((msg) => {
-            console.log(msg);
-        });
+        // chrome.runtime.onMessage.addListener((msg) => {
+        //     console.log(msg);
+        // });
         // browserService.sendMessage({ action: "fetch" });
         browserService.getData("token", StorageEnum.LOCAL).then((res) => {
             console.log("Token", res);
