@@ -4,6 +4,10 @@ import { useSuggestionBox } from "../hooks/useSuggestionBox";
 import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 import { browserService } from "../services/browser";
 
+type LabelType = {
+    selector: "id" | "class" | "name" | "tag" | "placeholder" | "title";
+    label: string;
+};
 function App() {
     const [showPopup, setShowPopup] = useState(false);
     const [domain, setDomain] = useState("");
@@ -86,6 +90,23 @@ function App() {
             //     payload: event,
             // });
             if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
+                let label: LabelType = { selector: "tag", label: "" };
+                if (event.target.id) {
+                    label = { selector: "id", label: event.target.id };
+                } else if (event.target.className) {
+                    label = { selector: "class", label: event.target.className };
+                } else if (event.target.name) {
+                    label = { selector: "name", label: event.target.name };
+                } else if (event.target.tagName) {
+                    label = { selector: "tag", label: event.target.tagName };
+                } else if (event.target.placeholder) {
+                    label = { selector: "placeholder", label: event.target.placeholder };
+                } else if (event.target.title) {
+                    label = { selector: "title", label: event.target.title };
+                } else {
+                    throw Error("Error saving credentials");
+                }
+                console.log("User entered", label);
                 const fieldInfo = {
                     type: event.target.tagName,
                     value: event.target.value,
