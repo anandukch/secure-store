@@ -1,6 +1,5 @@
 import { StorageEnum } from "../common/enum";
-import { encryptBoxB64, encryptMetadata, generateEncryptionKey } from "../crypto/crypto";
-import { BaseService } from "./base";
+import { decryptBoxB64, decryptMetadata, encryptBoxB64, encryptMetadata, generateEncryptionKey } from "../crypto/crypto";
 import { browserService } from "./browser";
 import { fetchService } from "./fetch";
 
@@ -23,6 +22,10 @@ export type VaultRequest = {
     encryptedMetadata: string;
     metadataDecryptionHeader: string;
 };
+
+export type VaultResponse = {
+    userId: string;
+} & VaultRequest;
 export class VaultService {
     VAULT_ENDPOINT = "/vaults";
     public async uploadSecret({ projectId, siteUrl, secrets }: VaultType) {
@@ -57,8 +60,40 @@ export class VaultService {
     private async createVaultApi(vaultRequest: VaultRequest) {
         return await fetchService.post(this.VAULT_ENDPOINT, vaultRequest);
     }
-    public async getSecretApi() {
-        return await fetchService.get(this.VAULT_ENDPOINT);
+    public async getSecretApi(siteUrl: string, projectId: string) {
+        console.log("get secret api", siteUrl, projectId);
+
+        return await fetchService.get(`${this.VAULT_ENDPOINT}?siteUrl=${siteUrl}&projectId=${projectId}`);
+    }
+
+    public async decryptSecrets(encryptedVaults: VaultResponse[] = []) {
+        console.log(" encryptedVaults", encryptedVaults);
+
+        const masterKey = await browserService.getData("masterKey", StorageEnum.LOCAL);
+        if (!masterKey) {
+            throw new Error("Master key not found");
+        }
+        const decryptedSecrets = await Promise.all(
+            encryptedVaults.map(async (encryptedVault) => {
+                return await this.decryptSecretsData(encryptedVault, masterKey.masterKey);
+            }),
+        );
+        console.log("decrypted secrets", decryptedSecrets);
+        return decryptedSecrets;
+    }
+
+    private async decryptSecretsData(secrets: VaultResponse, masterKey: string) {
+        const secretKey = await decryptBoxB64(
+            {
+                encryptedData: secrets.encryptedKey,
+                nonce: secrets.keyDecryptionNonce,
+            },
+            masterKey,
+        );
+
+        const decryptedSecrets = await decryptMetadata(secrets.encryptedMetadata, secrets.metadataDecryptionHeader, secretKey);
+        console.log("decrypted secrets", decryptedSecrets);
+        return decryptedSecrets;
     }
 }
 

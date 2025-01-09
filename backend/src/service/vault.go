@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"pass-saver/src/pkg/models"
 	"pass-saver/src/pkg/schemas"
 
@@ -58,9 +59,17 @@ func (v *VaultService) AddVault(c context.Context, userId primitive.ObjectID, va
 	return result, nil
 }
 
-func (v *VaultService) GetAllVaultByUserId(c context.Context, userId primitive.ObjectID) ([]models.Vault, error) {
+func (v *VaultService) GetAllVaultByUserId(c context.Context, userId primitive.ObjectID, siteUrl string, projectId string) ([]models.Vault, error) {
 	var vaults []models.Vault
-	cursor, err := v.Model.Find(c, bson.M{"userId": userId})
+	query := bson.M{"userId": userId.Hex()}
+	if siteUrl != "" {
+		query["siteUrl"] = siteUrl
+	}
+	if projectId != "" {
+		query["projectId"] = projectId
+	}
+	fmt.Println("Query: ", query)
+	cursor, err := v.Model.Find(c, query)
 	if err != nil {
 		return nil, err
 	}

@@ -63,12 +63,18 @@ func (ctrl *VaultHandler) AddVault(c *fiber.Ctx) error {
 }
 
 func (ctrl *VaultHandler) GetAllVaults(c *fiber.Ctx) error {
-	user := c.Locals("user").(models.User)
+	user := c.Locals("user").(*models.User)
+	// get query paramas
+	siteUrl := c.Query("siteUrl")
+	projectId := c.Query("projectId")
+	fmt.Printf("SiteUrl: %v , ProjectId: %v", siteUrl, projectId)
+	fmt.Printf("User: %v", user)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	var userVaults []models.Vault
-	userVaults, err := ctrl.VaultService.GetAllVaultByUserId(ctx, user.Id)
+
+	userVaults, err := ctrl.VaultService.GetAllVaultByUserId(ctx, user.Id, siteUrl, projectId)
 
 	if err != nil {
 		return response.JSONResponse(c, http.StatusNotFound, "error", "Vault not found")

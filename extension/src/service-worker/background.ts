@@ -1,9 +1,8 @@
 import browser from "webextension-polyfill";
 import { ActionEnum, StorageEnum } from "../common/enum";
 import { browserService } from "../services/browser";
-import { authService } from "../services/auth";
 import { createVaults, getSecrets } from "../axios";
-import { VaultRequest, vaultService } from "../services/vault";
+import { VaultRequest, VaultResponse, vaultService } from "../services/vault";
 import { fetchService } from "../services/fetch";
 // browser.runtime.onMessage.addListener((msg) => {
 //     console.log(msg);
@@ -131,36 +130,32 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
         response({ message: "fetch state response from background", data: globalState });
     }
 
-    if (msg.action === ActionEnum.FETCH_SECRETS) {
-        const data = await vaultService.getSecretApi();
-        console.log("fetch secrets", data);
-        response({ message: "fetch secrets response from background", data });
-    }
+    // if (msg.action === ActionEnum.FETCH_SECRETS) {
+    //     const data = await vaultService.getSecretApi();
+    //     console.log("fetch secrets", data);
+    //     response({ message: "fetch secrets response from background", data });
+    // }
 
     if (msg.action === ActionEnum.CREATE_SECRET) {
         console.log("create secret started", msg.payload);
 
         // const { data } = await createSecrets(msg.payload);
         const data = await vaultService.uploadSecret(msg.payload);
-        // console.log("token", await browserService.getData("token", StorageEnum.LOCAL));
-
-        // await fetch("http://localhost:5050/api/vaults", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         Authorization: `Bearer ${(await browserService.getData("token", StorageEnum.LOCAL))?.token}`,
-        //     },
-        //     body: JSON.stringify(data),
-        // })
-        //     .then(async (res) => {
-        //         console.log(await res.json());
-        //     })
-        //     .catch((err) => {
-        //         console.log(err);
-        //     });
         console.log({ message: "create secret response from background", data });
 
         return { message: "create secret response from background", data };
+    }
+    if (msg.action === ActionEnum.FETCH_SECRETS) {
+        const payload = msg.payload;
+        console.log("fetch secrets", payload);
+
+        const data = await vaultService.getSecretApi(payload?.siteUrl, payload?.projectId);
+        const secretsResponse: VaultResponse[] = (await data.json()).data;
+        console.log("fetch secrets", secretsResponse);
+
+        const decryptedSecrets = await vaultService.decryptSecrets(secretsResponse);
+        console.log("fetch secrets", decryptedSecrets);
+        return decryptedSecrets;
     }
     return true;
 });

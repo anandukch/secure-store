@@ -63,6 +63,10 @@ class BrowserService {
     public async sendVaultCreationMessage(data: any) {
         return await this.sendMessage({ action: ActionEnum.CREATE_SECRET, payload: data });
     }
+
+    public async sendGetSecretMessage(siteUrl: string = "", projectId: string = "") {
+        return await this.sendMessage({ action: ActionEnum.FETCH_SECRETS, payload: { siteUrl, projectId } });
+    }
 }
 
 export const browserService = new BrowserService(browser);

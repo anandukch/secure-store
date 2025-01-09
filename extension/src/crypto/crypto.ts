@@ -329,6 +329,14 @@ export const decryptBlob = async ({ encryptedData, decryptionHeader }: Encrypted
     return pullResult.message;
 };
 
+export const decryptMetadata = async (data: string, decryptionHeader: string, key: string) => {
+    return _decryptMetadataJSON({
+        encryptedDataB64: data,
+        decryptionHeaderB64: decryptionHeader,
+        keyB64: key,
+    });
+};
+
 export const _decryptMetadataJSON_New = async (blob: EncryptedBlob, key: BytesOrB64) =>
     JSON.parse(new TextDecoder().decode(await decryptBlob(blob, key))) as unknown;
 

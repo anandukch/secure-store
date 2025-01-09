@@ -5,20 +5,35 @@ import { CredentialDisplay } from "./CredentialDisplay";
 import { CustomFields } from "./CustomFields";
 import { PopupFooter } from "./PopupFooter";
 
+export interface Credential {
+    id: string;
+    key: string;
+    value: string;
+    type?: "password" | "text";
+    label?: string;
+}
 interface SaveCredentialsPopupProps {
-    username: string;
-    password: string;
+    credentials: Credential[];
     url: string;
     onSave: (data: any) => void;
     onCancel: () => void;
 }
 
-export function SaveCredentialsPopup({ username, password, url, onCancel, onSave }: SaveCredentialsPopupProps) {
+export function SaveCredentialsPopup({ credentials, url, onCancel, onSave }: SaveCredentialsPopupProps) {
     const [selectedProject, setSelectedProject] = useState("Personal");
-    const [usernameToSave, setUsername] = useState(username);
-    const [passwordToSave, setPassword] = useState(password);
+    // const [usernameToSave, setUsername] = useState(username);
+    // const [passwordToSave, setPassword] = useState(password);
+    const [credentialsToSave, setCredentialsToSave] = useState<Credential[]>(credentials);
     const [customFields, setCustomFields] = useState<Record<string, { key: string; value: string }>>({});
 
+    const handleChangeCredentials = (index: string, key: string, value: string) => {
+        setCredentialsToSave((prev) => {
+            const newCredentials = [...prev];
+            const indexToChange = newCredentials.findIndex((cred) => cred.id === index);
+            newCredentials[indexToChange] = { ...newCredentials[indexToChange], value };
+            return newCredentials;
+        });
+    };
     const handleAddField = () => {
         const id = crypto.randomUUID();
         setCustomFields((prev) => ({
@@ -46,9 +61,9 @@ export function SaveCredentialsPopup({ username, password, url, onCancel, onSave
         onSave({
             siteUrl: url,
             projectId: selectedProject,
-            secrets: { email: usernameToSave, password: passwordToSave, customFields },
+            secrets: credentialsToSave,
         });
-        console.log(usernameToSave, passwordToSave, selectedProject, customFields);
+        console.log(selectedProject, customFields);
     };
 
     return (
@@ -84,13 +99,48 @@ export function SaveCredentialsPopup({ username, password, url, onCancel, onSave
                 >
                     <ProjectSelector selected={selectedProject} onChange={setSelectedProject} />
 
-                    <CredentialDisplay
+                    {/* <CredentialDisplay
                         username={usernameToSave}
                         password={passwordToSave}
                         url={url}
                         onUsernameChange={setUsername}
                         onPasswordChange={setPassword}
-                    />
+                    /> */}
+                    <div style={{ marginBottom: "8px" }}>
+                        <label style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#4a4a4a" }}>Website</label>
+                        <input
+                            type="text"
+                            value={url}
+                            readOnly
+                            style={{
+                                width: "100%",
+                                padding: "8px 12px",
+                                border: "1px solid #d1d5db",
+                                borderRadius: "4px",
+                                backgroundColor: "#f9fafb",
+                            }}
+                        />
+                    </div>
+
+                    {credentialsToSave.map((cred) => (
+                        <div key={cred.id} style={{ marginBottom: "8px" }}>
+                            <label style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#4a4a4a" }}>
+                                {cred.label || cred.key}
+                            </label>
+                            <input
+                                type={cred.type || "text"}
+                                value={cred.value}
+                                style={{
+                                    width: "100%",
+                                    padding: "8px 12px",
+                                    border: "1px solid #d1d5db",
+                                    borderRadius: "4px",
+                                    backgroundColor: "#f9fafb",
+                                }}
+                                onChange={(e) => handleChangeCredentials(cred.id, cred.key, e.target.value)}
+                            />
+                        </div>
+                    ))}
 
                     <CustomFields fields={customFields} onAdd={handleAddField} onChange={handleChangeField} onRemove={handleRemoveField} />
                 </div>

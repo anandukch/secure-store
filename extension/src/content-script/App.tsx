@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
-import browser from "webextension-polyfill";
-import { SaveCredentialsPopup } from "./components/save-credentials/SaveCredentialsPopup";
+import { Credential, SaveCredentialsPopup } from "./components/save-credentials/SaveCredentialsPopup";
 import { useSuggestionBox } from "../hooks/useSuggestionBox";
 import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 import { browserService } from "../services/browser";
 
 function App() {
     const [showPopup, setShowPopup] = useState(false);
-
+    const [domain, setDomain] = useState("");
+    const [credentials, setCredentials] = useState<Credential[]>([]);
     useEffect(() => {
+        const url = new URL(window.location.href);
+        const urlParts = url.hostname.split("/");
+        setDomain(urlParts[0]);
+        // setCurrentUrl(window.location.href);
+        browserService
+            .sendGetSecretMessage(urlParts[0])
+            .then((response) => {
+                console.log("fetched vaults ", response);
+            })
+            .catch((err) => {
+                console.log("Error sending message to background script:", err);
+            });
         const storedShowPopup = sessionStorage.getItem("showPopup");
         if (storedShowPopup) {
             setShowPopup(true);
@@ -21,36 +33,21 @@ function App() {
             },
         });
 
-        // chrome.runtime.onMessage.addListener((msg) => {
-        //     // console.log("mount", msg);
-        //     if (msg.action === "mount") {
-        //         if (msg.payload.globalState && msg.payload.globalState.showPopup) {
-        //             console.log("Show confirmation");
-        //         }
-        //     }
-
-        //     return Promise.resolve("Got your message");
-        // });
         browserService.sendMessage({ action: "check_credentials", payload: { url: window.location.href } }).then((response) => {
             console.log("response message ", response);
         });
-        // console.log("tested message ", a);
 
         if (window.location.href.includes("login")) {
             // const usernameField = document.querySelector('input[name="username"]') as HTMLInputElement;
             // const passwordField = document.querySelector('input[name="password"]') as HTMLInputElement;
             // console.log(usernameField, passwordField);
-
             // inert the username and password into the fields
             // document.querySelector('input[name="username"]')?.setAttribute("value", "username");
             // document.querySelector('input[name="password"]')?.setAttribute("value", "password");
-
             // browser.runtime.sendMessage({ action: "fetch" }).then((response) => {
             //     console.log("response", response);
             // });
-
-            const inputFields = document.querySelectorAll("input");
-
+            // const inputFields = document.querySelectorAll("input");
             // inputFields.forEach((field) => {
             //     if (field.type.includes("email") || field.name === "username") {
             //         // createSuggestionBox(field);
@@ -79,19 +76,9 @@ function App() {
             ) {
                 console.log("Login button clicked", fieldInfo);
                 console.log(event.target.innerHTML);
-                console.log(event.target.innerHTML);
 
                 setShowPopup(true);
                 sessionStorage.setItem("showPopup", "true");
-
-                browserService
-                    .sendLoginMessage({
-                        url: window.location.href,
-                        fieldInfo,
-                    })
-                    .then((response) => {
-                        console.log("Response from background script:", response);
-                    });
             }
 
             // browser.runtime.sendMessage({
@@ -102,8 +89,27 @@ function App() {
                 const fieldInfo = {
                     type: event.target.tagName,
                     value: event.target.value,
+                    label: event.target.name || event.target.placeholder || event.target.title,
                     action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
                 };
+                setCredentials((prev) => {
+                    const newCredentials = [...prev];
+                    const index = newCredentials.findIndex((cred) => cred.label === fieldInfo.label);
+                    if (index > -1) {
+                        newCredentials[index] = { ...newCredentials[index], value: fieldInfo.value };
+                    } else {
+                        const newCredential: Credential = {
+                            id: crypto.randomUUID(),
+                            key: fieldInfo.label,
+                            value: fieldInfo.value,
+                            type: fieldInfo.type === "INPUT" ? "text" : "password",
+                            label: fieldInfo.label,
+                        };
+                        newCredentials.push(newCredential);
+                    }
+                    return newCredentials;
+                });
+                console.log("User entered", fieldInfo);
 
                 browserService
                     .sendMessage({
@@ -130,14 +136,9 @@ function App() {
 
         return () => {
             console.log("App unmounted");
+            sessionStorage.removeItem("showPopup");
         };
     }, []);
-
-    const credentials = {
-        username: "demo@example.com",
-        password: "password123",
-        url: "https://example.com",
-    };
 
     const handleSave = (data: any) => {
         console.log("Saving credentials...", data);
@@ -172,6 +173,11 @@ function App() {
             url: "https://test.com",
         },
     ];
+    // const credentials: Credential[] = [
+    //     { id: crypto.randomUUID(), key: "username", value: "demo@example.com", label: "Username", type: "text" },
+    //     { id: crypto.randomUUID(), key: "password", value: "password123", label: "Password", type: "password" },
+    //     { id: crypto.randomUUID(), key: "apiKey", value: "abc123xyz", label: "API Key", type: "text" },
+    // ];
     return (
         <>
             <div style={{}}>
@@ -184,13 +190,7 @@ function App() {
                             zIndex: 9999,
                         }}
                     >
-                        <SaveCredentialsPopup
-                            username={credentials.username}
-                            password={credentials.password}
-                            url={credentials.url}
-                            onSave={handleSave}
-                            onCancel={handleCancel}
-                        />
+                        <SaveCredentialsPopup credentials={credentials} url={domain} onSave={handleSave} onCancel={handleCancel} />
                     </div>
                 )}
 
