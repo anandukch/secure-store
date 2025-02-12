@@ -1,151 +1,95 @@
-import { useState } from "react";
-import { PopupHeader } from "./PopupHeader";
-import { ProjectSelector } from "./ProjectSelector";
-import { CredentialDisplay } from "./CredentialDisplay";
-import { CustomFields } from "./CustomFields";
-import { PopupFooter } from "./PopupFooter";
+import React, { useEffect, useState } from "react";
 
-export interface Credential {
-    id: string;
-    key: string;
-    value: string;
-    type?: "password" | "text";
-    label?: string;
-}
 interface SaveCredentialsPopupProps {
-    credentials: Credential[];
     url: string;
     onSave: (data: any) => void;
-    onCancel: () => void;
+    onCancel: (data: any) => void;
 }
 
-export function SaveCredentialsPopup({ credentials, url, onCancel, onSave }: SaveCredentialsPopupProps) {
-    const [selectedProject, setSelectedProject] = useState("Personal");
-    // const [usernameToSave, setUsername] = useState(username);
-    // const [passwordToSave, setPassword] = useState(password);
-    const [credentialsToSave, setCredentialsToSave] = useState<Credential[]>(credentials);
-    const [customFields, setCustomFields] = useState<Record<string, { key: string; value: string }>>({});
+export function SaveCredentialsPopup({ onSave, onCancel }: SaveCredentialsPopupProps) {
+    const [progress, setProgress] = useState(100);
+    const [isVisible, setIsVisible] = useState(true);
 
-    const handleChangeCredentials = (index: string, key: string, value: string) => {
-        setCredentialsToSave((prev) => {
-            const newCredentials = [...prev];
-            const indexToChange = newCredentials.findIndex((cred) => cred.id === index);
-            newCredentials[indexToChange] = { ...newCredentials[indexToChange], value };
-            return newCredentials;
-        });
-    };
-    const handleAddField = () => {
-        const id = crypto.randomUUID();
-        setCustomFields((prev) => ({
-            ...prev,
-            [id]: { key: "", value: "" },
-        }));
-    };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setProgress((prev) => Math.max(prev - 2, 0));
+        }, 140);
 
-    const handleChangeField = (id: string, key: string, value: string) => {
-        setCustomFields((prev) => ({
-            ...prev,
-            [id]: { key, value },
-        }));
-    };
+        const timeout = setTimeout(() => {
+            setIsVisible(false);
+            setTimeout(onCancel, 500);
+        }, 7000);
 
-    const handleRemoveField = (id: string) => {
-        setCustomFields((prev) => {
-            const newFields = { ...prev };
-            delete newFields[id];
-            return newFields;
-        });
-    };
-
-    const handleSave = () => {
-        onSave({
-            siteUrl: url,
-            projectId: selectedProject,
-            secrets: credentialsToSave,
-        });
-        console.log(selectedProject, customFields);
-    };
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+        };
+    }, [onCancel]);
 
     return (
         <div
             style={{
                 position: "fixed",
-                inset: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                top: "1rem",
+                right: "1rem",
+                backgroundColor: "#1e1e1e",
+                borderRadius: "6px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
+                padding: "0.5rem 0.5rem 0.5rem 0.5rem",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                fontSize: "12px",
+                zIndex: 1000,
+                color: "#ffffff",
+                opacity: isVisible ? 1 : 0,
+                transition: "opacity 0.5s ease-out",
+                gap: "0.5rem",
             }}
         >
-            <div
-                style={{
-                    backgroundColor: "white",
-                    borderRadius: "0.5rem",
-                    boxShadow: "0 10px 15px rgba(0, 0, 0, 0.1)",
-                    width: "30rem",
-                    overflow: "hidden",
-                    animation: "slideIn 0.3s ease-out",
-                }}
-            >
-                <PopupHeader title="Save Password" onClose={onCancel} />
-
-                <div
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+                <p style={{ margin: "0", fontWeight: "500", color: "white" }}>Save credentials?</p>
+                <button
+                    type="button"
+                    onClick={onSave}
                     style={{
-                        padding: "1rem", // Equivalent to `p-4`
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "1rem", // Equivalent to `space-y-4`
+                        background: "#007bff",
+                        color: "white",
+                        border: "none",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
                     }}
                 >
-                    <ProjectSelector selected={selectedProject} onChange={setSelectedProject} />
-
-                    {/* <CredentialDisplay
-                        username={usernameToSave}
-                        password={passwordToSave}
-                        url={url}
-                        onUsernameChange={setUsername}
-                        onPasswordChange={setPassword}
-                    /> */}
-                    <div style={{ marginBottom: "8px" }}>
-                        <label style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#4a4a4a" }}>Website</label>
-                        <input
-                            type="text"
-                            value={url}
-                            readOnly
-                            style={{
-                                width: "100%",
-                                padding: "8px 12px",
-                                border: "1px solid #d1d5db",
-                                borderRadius: "4px",
-                                backgroundColor: "#f9fafb",
-                            }}
-                        />
-                    </div>
-
-                    {credentialsToSave.map((cred) => (
-                        <div key={cred.id} style={{ marginBottom: "8px" }}>
-                            <label style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#4a4a4a" }}>
-                                {cred.label || cred.key}
-                            </label>
-                            <input
-                                type={cred.type || "text"}
-                                value={cred.value}
-                                style={{
-                                    width: "100%",
-                                    padding: "8px 12px",
-                                    border: "1px solid #d1d5db",
-                                    borderRadius: "4px",
-                                    backgroundColor: "#f9fafb",
-                                }}
-                                onChange={(e) => handleChangeCredentials(cred.id, cred.key, e.target.value)}
-                            />
-                        </div>
-                    ))}
-
-                    <CustomFields fields={customFields} onAdd={handleAddField} onChange={handleChangeField} onRemove={handleRemoveField} />
-                </div>
-
-                <PopupFooter onSave={handleSave} onCancel={onCancel} />
+                    Yes
+                </button>
+                <button
+                    type="button"
+                    onClick={onCancel}
+                    style={{
+                        background: "none",
+                        border: "1px solid #555",
+                        color: "#bbbbbb",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                    }}
+                >
+                    No
+                </button>
+            </div>
+            <div
+                style={{
+                    height: "3px",
+                    width: "100%",
+                    backgroundColor: "#444",
+                    borderRadius: "2px",
+                    overflow: "hidden",
+                    position: "relative",
+                    marginTop: "4px",
+                }}
+            >
+                <div style={{ height: "100%", width: `${progress}%`, backgroundColor: "#007bff", transition: "width 0.14s linear" }}></div>
             </div>
         </div>
     );

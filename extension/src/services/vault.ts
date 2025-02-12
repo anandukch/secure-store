@@ -12,7 +12,7 @@ export type SecretType = {
 export type VaultType = {
     projectId: string;
     siteUrl: string;
-    secrets: SecretType;
+    secrets: any;
 };
 export type VaultRequest = {
     projectId: string;
@@ -30,11 +30,9 @@ export class VaultService {
     VAULT_ENDPOINT = "/vaults";
     public async uploadSecret({ projectId, siteUrl, secrets }: VaultType) {
         // const worker = await this.checkHealth();
-        console.log("vault service", secrets);
 
         const secretKey = await generateEncryptionKey();
         const data = await browserService.getData("masterKey", StorageEnum.LOCAL);
-        console.log("master key", data);
 
         const masterKey = data ? data.masterKey : undefined;
         if (!masterKey) {
@@ -61,8 +59,6 @@ export class VaultService {
         return await fetchService.post(this.VAULT_ENDPOINT, vaultRequest);
     }
     public async getSecretApi(siteUrl: string, projectId: string) {
-        console.log("get secret api", siteUrl, projectId);
-
         return await fetchService.get(`${this.VAULT_ENDPOINT}?siteUrl=${siteUrl}&projectId=${projectId}`);
     }
 

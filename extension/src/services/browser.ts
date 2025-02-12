@@ -10,8 +10,8 @@ class BrowserService {
         await this.extension.tabs.create({ url });
     }
 
-    public async sendMessage(message: any): Promise<any> {
-        return await browser.runtime.sendMessage(message);
+    public sendMessage(message: any): Promise<any> {
+        return browser.runtime.sendMessage(message);
     }
 
     public async sendMessageToTab(tabId: number, message: any): Promise<any> {

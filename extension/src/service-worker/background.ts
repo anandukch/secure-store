@@ -79,11 +79,11 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
         console.log("check_credentials", msg);
         response({ message: "success  check_credentails" });
     }
-    if (msg.action === "form_interaction") {
-        console.log("form_interaction", msg);
-        response({ message: "success  form_interaction" });
-        return "fetch back";
-    }
+    // if (msg.action === "form_interaction") {
+    //     console.log("form_interaction", msg);
+    //     response({ message: "success  form_interaction" });
+    //     return "fetch back";
+    // }
 
     // if (msg.action === ActionEnum.LOGIN) {
     //     console.log("login", msg);

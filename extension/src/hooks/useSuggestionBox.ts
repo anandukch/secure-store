@@ -48,7 +48,6 @@ export function useSuggestionBox() {
 
     const handleSelect = (credential: StoredCredential) => {
         if (activeInput) {
-            console.log("Selected credential:", credential);
             console.log("Active input:", activeInput);
 
             if (activeInput.type === "password") {

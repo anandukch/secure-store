@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import { Credential, SaveCredentialsPopup } from "./components/save-credentials/SaveCredentialsPopup";
+import { SaveCredentialsPopup } from "./components/save-credentials/SaveCredentialsPopup";
 import { useSuggestionBox } from "../hooks/useSuggestionBox";
 import { SuggestionBox } from "./components/suggestions/SuggestionBox";
 import { browserService } from "../services/browser";
+import { Credential, LabelType } from "../types";
 
-type LabelType = {
-    selector: "id" | "class" | "name" | "tag" | "placeholder" | "title";
-    label: string;
-};
 function App() {
     const [showPopup, setShowPopup] = useState(false);
     const [domain, setDomain] = useState("");
@@ -44,12 +41,10 @@ function App() {
         if (window.location.href.includes("login")) {
             // const usernameField = document.querySelector('input[name="username"]') as HTMLInputElement;
             // const passwordField = document.querySelector('input[name="password"]') as HTMLInputElement;
-            // console.log(usernameField, passwordField);
             // inert the username and password into the fields
             // document.querySelector('input[name="username"]')?.setAttribute("value", "username");
             // document.querySelector('input[name="password"]')?.setAttribute("value", "password");
             // browser.runtime.sendMessage({ action: "fetch" }).then((response) => {
-            //     console.log("response", response);
             // });
             // const inputFields = document.querySelectorAll("input");
             // inputFields.forEach((field) => {
@@ -65,8 +60,6 @@ function App() {
         }
 
         const handleUserInteraction = (event: any) => {
-            // console.log("User interaction detected", event);
-
             const fieldInfo = {
                 type: event.target.tagName,
                 value: event.target.value,
@@ -78,17 +71,10 @@ function App() {
                 ["Login", "Submit"].includes(event.target.innerHTML as never) &&
                 fieldInfo.action === "click"
             ) {
-                console.log("Login button clicked", fieldInfo);
-                console.log(event.target.innerHTML);
-
                 setShowPopup(true);
                 sessionStorage.setItem("showPopup", "true");
             }
 
-            // browser.runtime.sendMessage({
-            //     action: "form_interaction",
-            //     payload: event,
-            // });
             if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
                 let label: LabelType = { selector: "tag", label: "" };
                 if (event.target.id) {
@@ -106,22 +92,21 @@ function App() {
                 } else {
                     throw Error("Error saving credentials");
                 }
-                console.log("User entered", label);
                 const fieldInfo = {
                     type: event.target.tagName,
                     value: event.target.value,
-                    label: event.target.name || event.target.placeholder || event.target.title,
+                    label,
                     action: event.type, // 'keydown', 'k2eyup', 'click', 'focus', 'change', etc.
                 };
                 setCredentials((prev) => {
                     const newCredentials = [...prev];
-                    const index = newCredentials.findIndex((cred) => cred.label === fieldInfo.label);
+                    const index = newCredentials.findIndex((cred) => cred.key === fieldInfo.label.label);
                     if (index > -1) {
                         newCredentials[index] = { ...newCredentials[index], value: fieldInfo.value };
                     } else {
                         const newCredential: Credential = {
-                            id: crypto.randomUUID(),
-                            key: fieldInfo.label,
+                            // id: crypto.randomUUID(),
+                            key: fieldInfo.label.label,
                             value: fieldInfo.value,
                             type: fieldInfo.type === "INPUT" ? "text" : "password",
                             label: fieldInfo.label,
@@ -130,7 +115,6 @@ function App() {
                     }
                     return newCredentials;
                 });
-                console.log("User entered", fieldInfo);
 
                 browserService
                     .sendMessage({
@@ -143,9 +127,6 @@ function App() {
                     .catch((err) => {
                         console.log("Error sending message to background script:", err);
                     });
-                // .then((response) => {
-                //     console.log("Response from background script:", response);
-                // });
             }
         };
 
@@ -156,21 +137,29 @@ function App() {
         document.addEventListener("change", handleUserInteraction);
 
         return () => {
-            console.log("App unmounted");
             sessionStorage.removeItem("showPopup");
         };
     }, []);
 
     const handleSave = (data: any) => {
-        console.log("Saving credentials...", data);
+        console.log("Saving credentials...", credentials);
         browserService
-            .sendVaultCreationMessage(data)
+            .sendVaultCreationMessage({
+                projectId: "123",
+                siteUrl: domain,
+                secrets: credentials,
+            })
             .then((res) => {
                 console.log("Credentials saved", res);
                 setShowPopup(false);
             })
             .catch((err) => {
                 console.log("Error saving credentials", err);
+            })
+            .finally(() => {
+                sessionStorage.removeItem("showPopup");
+                // remove credentials from state
+                setCredentials([]);
             });
     };
 
@@ -178,6 +167,7 @@ function App() {
         sessionStorage.removeItem("showPopup");
         console.log("Cancelled saving credentials");
         setShowPopup(false);
+        setCredentials([]);
     };
 
     const { showSuggestions, inputRect, handleSelect, closeSuggestions } = useSuggestionBox();
@@ -211,7 +201,7 @@ function App() {
                             zIndex: 9999,
                         }}
                     >
-                        <SaveCredentialsPopup credentials={credentials} url={domain} onSave={handleSave} onCancel={handleCancel} />
+                        <SaveCredentialsPopup url={domain} onSave={handleSave} onCancel={handleCancel} />
                     </div>
                 )}
 
