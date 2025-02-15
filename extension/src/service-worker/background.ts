@@ -130,16 +130,9 @@ browser.runtime.onMessage.addListener(async (msg: MessageInterface, sender, resp
         response({ message: "fetch state response from background", data: globalState });
     }
 
-    // if (msg.action === ActionEnum.FETCH_SECRETS) {
-    //     const data = await vaultService.getSecretApi();
-    //     console.log("fetch secrets", data);
-    //     response({ message: "fetch secrets response from background", data });
-    // }
-
     if (msg.action === ActionEnum.CREATE_SECRET) {
         console.log("create secret started", msg.payload);
 
-        // const { data } = await createSecrets(msg.payload);
         const data = await vaultService.uploadSecret(msg.payload);
         console.log({ message: "create secret response from background", data });
 

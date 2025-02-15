@@ -38,6 +38,8 @@ export class VaultService {
         if (!masterKey) {
             throw new Error("Master key not found");
         }
+        console.log("masterKey", masterKey);
+
         const encryptedSecretKey = await encryptBoxB64(secretKey, masterKey);
         const encryptedSecrets = await encryptMetadata(secrets, secretKey);
         const vaultRequest = {
@@ -58,6 +60,7 @@ export class VaultService {
     private async createVaultApi(vaultRequest: VaultRequest) {
         return await fetchService.post(this.VAULT_ENDPOINT, vaultRequest);
     }
+
     public async getSecretApi(siteUrl: string, projectId: string) {
         return await fetchService.get(`${this.VAULT_ENDPOINT}?siteUrl=${siteUrl}&projectId=${projectId}`);
     }

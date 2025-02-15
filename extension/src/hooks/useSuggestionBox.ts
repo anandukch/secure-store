@@ -1,71 +1,84 @@
 import { useState, useEffect } from "react";
+import { StoredCredential } from "../content-script/components/suggestions/CredentialsSuggestion";
 
-interface StoredCredential {
-    username: string;
-    password: string;
-    url: string;
-}
+const credentialMatchesInput = (credential: StoredCredential, input: HTMLInputElement) => {
+    return credential.some((field) => {
+        const selector = field.label.selector;
+        const label = field.label.label;
 
-export function useSuggestionBox() {
+        return (
+            (selector === "id" && input.id === label) ||
+            (selector === "name" && input.name === label) ||
+            (selector === "placeholder" && input.placeholder === label) ||
+            (selector === "class" && input.className.includes(label)) ||
+            (selector === "tag" && input.tagName.toLowerCase() === label) ||
+            (selector === "title" && input.title === label)
+        );
+    });
+};
+export function useSuggestionBox(credentials: StoredCredential[]) {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [inputRect, setInputRect] = useState<DOMRect | null>(null);
     const [activeInput, setActiveInput] = useState<HTMLInputElement | null>(null);
-
-    const [, forceUpdate] = useState(0);
+    const [filteredCredentials, setFilteredCredentials] = useState<StoredCredential[]>([]);
 
     useEffect(() => {
-        if (typeof window === "undefined") return; // Skip SSR
+        if (typeof window === "undefined") return;
 
-        // Add a small delay before querying the DOM
-        const timeoutId = setTimeout(() => {
-            const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
-            console.log("inputs with delay:", inputs); // Log inputs
+        function handleInputFocus(event: Event) {
+            if (!(event.target instanceof HTMLInputElement)) return;
+            const input = event.target;
+            setActiveInput(input);
+            setInputRect(input.getBoundingClientRect());
 
-            if (inputs.length === 0) {
-                console.log("No inputs found yet.");
-            }
+            // Match credentials based on all possible selectors
+            const matchingCredentials = credentials.filter((credential) => credentialMatchesInput(credential, input));
 
-            function handleInputFocus(event: Event) {
-                const input = event.target as HTMLInputElement;
-                if (input.type === "text" || input.type === "email" || input.type === "password") {
-                    setActiveInput(input);
-                    setInputRect(input.getBoundingClientRect());
-                    setShowSuggestions(true);
-                }
-            }
+            setFilteredCredentials(matchingCredentials);
+            setShowSuggestions(matchingCredentials.length > 0);
+        }
 
-            if (inputs.length > 0) {
-                inputs.forEach((input) => {
-                    input.addEventListener("focus", handleInputFocus);
-                });
-            }
-        }, 50);
+        function handleInputBlur(event: Event) {
+            setTimeout(() => setShowSuggestions(false), 200); // Delay to allow click selection
+        }
+
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+
+        inputs.forEach((input) => {
+            input.addEventListener("focus", handleInputFocus);
+            input.addEventListener("blur", handleInputBlur);
+        });
 
         return () => {
-            clearTimeout(timeoutId);
+            inputs.forEach((input) => {
+                input.removeEventListener("focus", handleInputFocus);
+                input.removeEventListener("blur", handleInputBlur);
+            });
         };
-    }, []);
+    }, [credentials]);
 
     const handleSelect = (credential: StoredCredential) => {
-        if (activeInput) {
-            console.log("Active input:", activeInput);
+        if (!activeInput) return;
 
-            if (activeInput.type === "password") {
-                activeInput.value = credential.password;
-            } else {
-                activeInput.value = credential.username;
-            }
-            const inputEvent = new Event("input", { bubbles: true });
-            const changeEvent = new Event("change", { bubbles: true });
-            activeInput.dispatchEvent(inputEvent);
-            activeInput.dispatchEvent(changeEvent);
-            setShowSuggestions(false);
+        // Find the corresponding value (username or password) for the active input
+        const field = credential.find((field) => credentialMatchesInput([field], activeInput));
+        if (field) {
+            activeInput.value = field.value;
+
+            // Trigger React-controlled input updates
+            ["input", "change", "keyup"].forEach((eventType) => {
+                const event = new Event(eventType, { bubbles: true });
+                activeInput.dispatchEvent(event);
+            });
         }
+
+        setShowSuggestions(false);
     };
 
     return {
         showSuggestions,
         inputRect,
+        filteredCredentials,
         handleSelect,
         closeSuggestions: () => setShowSuggestions(false),
     };

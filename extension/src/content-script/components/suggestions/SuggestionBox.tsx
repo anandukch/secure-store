@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
-import { CredentialSuggestion } from "./CredentialsSuggestion";
+import { CredentialSuggestion, StoredCredential } from "./CredentialsSuggestion";
 
-interface StoredCredential {
-    username: string;
-    password: string;
-    url: string;
-}
+// interface StoredCredential {
+//     username: string;
+//     password: string;
+//     url: string;
+// }
 
 interface SuggestionBoxProps {
     credentials: StoredCredential[];
@@ -34,7 +34,7 @@ export function SuggestionBox({ credentials, inputRect, onSelect, onClose }: Sug
             style={{
                 backgroundColor: "white",
                 boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                border: "1px solid #E5E7EB", // Equivalent to Tailwind's `border-gray-200`
+                border: "1px solid #E5E7EB",
                 overflow: "hidden",
                 zIndex: 50,
                 position: "absolute",
@@ -43,12 +43,7 @@ export function SuggestionBox({ credentials, inputRect, onSelect, onClose }: Sug
                 left: inputRect.left,
             }}
         >
-            <div
-                style={{
-                    maxHeight: "12rem", // Equivalent to Tailwind's `max-h-48`
-                    overflowY: "auto", // Equivalent to Tailwind's `overflow-y-auto`
-                }}
-            >
+            <div style={{ maxHeight: "12rem", overflowY: "auto" }}>
                 {credentials.map((credential, index) => (
                     <CredentialSuggestion key={index} credential={credential} onSelect={onSelect} />
                 ))}

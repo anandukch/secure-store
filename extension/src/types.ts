@@ -11,6 +11,6 @@ export interface Credential {
     // id: string;
     key: string;
     value: string;
-    type?: "password" | "text";
-    label?: LabelType;
+    type: string;
+    label: LabelType;
 }
