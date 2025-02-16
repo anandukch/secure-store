@@ -1,16 +1,15 @@
-import { LogIn, X } from "lucide-react";
+import { LogIn } from "lucide-react";
 import "../index.css";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { FormEvent, useState } from "react";
 interface LoginPopupProps {
     authType: "login" | "signup";
     onSubmit: (email: string, password: string) => void;
-    onCancel: () => void;
     onSignupClick: (type: "login" | "signup") => void;
     loading?: boolean;
 }
 
-export function AuthPopup({ authType, onSubmit, onCancel, onSignupClick, loading }: LoginPopupProps) {
+export function AuthPopup({ authType, onSubmit, onSignupClick, loading }: LoginPopupProps) {
     const title = authType === "login" ? "Sign In" : "Sign Up";
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -35,9 +34,6 @@ export function AuthPopup({ authType, onSubmit, onCancel, onSignupClick, loading
                         <LogIn className="w-5 h-5 text-white" />
                         <h2 className="text-white font-semibold">{title}</h2>
                     </div>
-                    <button onClick={onCancel} className="text-white hover:bg-indigo-700 rounded p-1">
-                        <X className="w-5 h-5" />
-                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-4 space-y-4">
@@ -89,13 +85,6 @@ export function AuthPopup({ authType, onSubmit, onCancel, onSignupClick, loading
                     )}
 
                     <div className="flex justify-end space-x-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onCancel}
-                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-75 disabled:cursor-not-allowed flex items-center space-x-2"
-                        >
-                            Cancel
-                        </button>
                         <button
                             disabled={loading}
                             type="submit"

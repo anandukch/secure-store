@@ -28,14 +28,10 @@ function App() {
         // });
         // browserService.sendMessage({ action: "fetch" });
         browserService.getData("token", StorageEnum.LOCAL).then((res) => {
-            console.log("Token", res);
-
             if (res?.token) {
                 console.log("Token found", res.token);
 
                 browserService.getData("masterKey", StorageEnum.LOCAL).then((res) => {
-                    console.log("User attributes", res);
-
                     if (res?.masterKey) {
                         setOpenAuthPopup(false);
                         setOpenCredentialsStat(true);
@@ -129,13 +125,7 @@ function App() {
         <>
             <div>
                 {openAuthPopup && (
-                    <AuthPopup
-                        authType={authType}
-                        onSubmit={handleSubmit}
-                        onCancel={() => console.log("canaveled")}
-                        onSignupClick={handleAuthClick}
-                        loading={isLoading}
-                    />
+                    <AuthPopup authType={authType} onSubmit={handleSubmit} onSignupClick={handleAuthClick} loading={isLoading} />
                 )}
                 {openCredentialsStat && (
                     <CredentialStats

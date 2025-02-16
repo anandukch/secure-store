@@ -63,14 +63,6 @@ export class CryptoWorker {
         return crypto.decryptB64(data, nonce, key);
     }
 
-    async encryptFile(data: Uint8Array) {
-        return crypto.encryptChaCha(data);
-    }
-
-    async decryptFile(fileData: Uint8Array, header: Uint8Array, key: string) {
-        return crypto.decryptChaCha(fileData, header, key);
-    }
-
     async fromB64(string: string) {
         return crypto.fromB64(string);
     }

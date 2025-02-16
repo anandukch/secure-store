@@ -32,12 +32,8 @@ export class AuthService extends BaseService {
         const worker = await this.checkHealth();
         const res = await getUserAttributes({ email });
         const { data }: { data: UserAttributesType } = res.data;
-        console.log(data.encryptedMasterKey);
-        console.log("User attributes:", data);
 
         const key = await worker.deriveKey(password, data.keyDecryptionSalt, data.kekOpsLimit, data.kekMemLimit);
-        console.log("Derived key:", key);
-        console.log(password);
 
         const masterKey = await worker.decryptBoxB64(
             {
@@ -52,7 +48,6 @@ export class AuthService extends BaseService {
 
     public async completeLogin(email: string) {
         const res = await login({ email });
-        console.log(res);
 
         const { data }: { data: LoginResponse } = res.data;
         return data;
@@ -72,7 +67,6 @@ export class AuthService extends BaseService {
         if (!data) {
             throw new Error("Error completing login");
         }
-        console.log("complete login", data);
         return {
             token: data.token,
             email: userAttributes.data.email,
