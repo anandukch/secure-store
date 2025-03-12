@@ -35,8 +35,9 @@ func (a *AuthMiddleWare) Middleware(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized in extraction of claims"})
 	}
+
 	// objId, _ := primitive.ObjectIDFromHex(claims["id"].(string)) // Perform type assertion
-	user, err := a.UserService.GetUserByEmail(c.Context(), claims["email"].(string)); 
+	user, err := a.UserService.GetUserByEmail(c.Context(), claims["email"].(string))
 	if err != nil {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid credentials")
 	}

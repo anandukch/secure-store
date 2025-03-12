@@ -9,6 +9,7 @@ import { OTPVerificationPopup } from "./components/OTPVerificationPopup";
 import { authService } from "./services/auth";
 import { browserService } from "./services/browser";
 import { StorageEnum } from "./common/enum";
+import { verifyUser } from "./axios";
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -23,24 +24,32 @@ function App() {
 
     useEffect(() => {
         console.log("App mounted");
-        // chrome.runtime.onMessage.addListener((msg) => {
-        //     console.log(msg);
-        // });
-        // browserService.sendMessage({ action: "fetch" });
         browserService.getData("token", StorageEnum.LOCAL).then((res) => {
             if (res?.token) {
                 console.log("Token found", res.token);
-
-                browserService.getData("masterKey", StorageEnum.LOCAL).then((res) => {
-                    if (res?.masterKey) {
+                verifyUser(res.token)
+                    .then((response) => {
+                        console.log("User verified", response);
                         setOpenAuthPopup(false);
                         setOpenCredentialsStat(true);
-                    } else {
+                    })
+                    .catch((err) => {
+                        console.log("User not verified", err);
                         browserService.removeData("token", StorageEnum.LOCAL);
                         browserService.removeData("masterKey", StorageEnum.LOCAL);
                         setOpenAuthPopup(true);
-                    }
-                });
+                    });
+                // browserService.getData("masterKey", StorageEnum.LOCAL).then((res) => {
+                //     console.log("Master key found", res);
+
+                //     if (res?.masterKey) {
+
+                //     } else {
+                //         browserService.removeData("token", StorageEnum.LOCAL);
+                //         browserService.removeData("masterKey", StorageEnum.LOCAL);
+                //         setOpenAuthPopup(true);
+                //     }
+                // });
             }
         });
         return () => {
@@ -58,7 +67,6 @@ function App() {
             authService
                 .loginUser({ email, password })
                 .then((res) => {
-                    console.log("response login", res);
                     browserService.sendLoginMessage(res).then((response) => {
                         console.log("response", response);
                         setIsLoading(false);

@@ -78,6 +78,7 @@ func main() {
 
 	authRouter := &routes.AuthRoute{
 		Handler: authController,
+		AuthMiddleware: &authMiddleware,
 	}
 
 	userRouter := &routes.UserRouter{

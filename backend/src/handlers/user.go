@@ -15,6 +15,15 @@ type UserHandler struct {
 	UserService *service.UserService
 }
 
+func (uc *UserHandler) GetAllUsers(c *fiber.Ctx) error {
+	users, err := uc.UserService.GetAllUsers(c)
+	if err != nil {
+		return response.JSONResponse(c, http.StatusInternalServerError, "error", nil)
+	}
+
+	return response.JSONResponse(c, http.StatusOK, "success", users)
+
+}
 func (uc *UserHandler) GetUserProfile(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 

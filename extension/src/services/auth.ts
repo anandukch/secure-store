@@ -31,9 +31,13 @@ export class AuthService extends BaseService {
     public async initLogin(email: string, password: string) {
         const worker = await this.checkHealth();
         const res = await getUserAttributes({ email });
+
         const { data }: { data: UserAttributesType } = res.data;
+        console.log("user attr", data);
 
         const key = await worker.deriveKey(password, data.keyDecryptionSalt, data.kekOpsLimit, data.kekMemLimit);
+
+        console.log("key", key);
 
         const masterKey = await worker.decryptBoxB64(
             {
@@ -55,13 +59,10 @@ export class AuthService extends BaseService {
 
     public async loginUser({ email, password }: { email: string; password: string }) {
         const userAttributes = await this.initLogin(email, password);
-        console.log("User attributes:", userAttributes);
 
         if (!userAttributes) {
             throw new Error("Error getting user attributes");
         }
-
-        console.log("User attributes:", userAttributes);
 
         const data = await this.completeLogin(email);
         if (!data) {
@@ -99,6 +100,8 @@ export class AuthService extends BaseService {
         console.log("KEK salt generated");
 
         const kek = await worker.deriveSensitiveKey(password, kekSalt);
+        console.log("KEK derived", kek);
+
         const masterKeyEncryptedWithKek = await worker.encryptBoxB64(masterKey, kek.key);
 
         const { publicKey, privateKey } = await worker.generateKeyPair();

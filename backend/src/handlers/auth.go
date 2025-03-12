@@ -81,3 +81,9 @@ func (ctrl *AuthHandler) SendOtp(c *fiber.Ctx) error {
 	return response.JSONResponse(c, http.StatusOK, "success", "OTP sent successfully")
 
 }
+
+func (ctrl *AuthHandler) VerifyUser(c *fiber.Ctx) error {
+
+	return response.JSONResponse(c, http.StatusOK, "success", "User verified successfully")
+
+}

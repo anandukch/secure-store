@@ -63,4 +63,8 @@ export const getProject = (id: string) => api.get(`/projects/${id}`);
 export const createVaults = (data: VaultRequest) => api.post("/vaults", data);
 export const getSecrets = () => api.get("/vaults");
 export const getSecret = (id: string) => api.get(`/vaults/${id}`);
+export const verifyUser = (token: string) => {
+    setHead(token);
+    return api.get("/auth/verify");
+};
 export default api;

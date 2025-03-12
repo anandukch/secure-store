@@ -35,6 +35,7 @@ func (r *UserService) GetUserByEmail(c context.Context, email string) (*models.U
 	return &user, nil
 }
 
+
 func (u *UserService) CreateUser(c *fiber.Ctx, user *schemas.CreateUser) (*mongo.InsertOneResult, error) {
 	newUser := models.User{
 		Id:                  primitive.NewObjectID(),

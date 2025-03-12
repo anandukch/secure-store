@@ -66,8 +66,6 @@ export class VaultService {
     }
 
     public async decryptSecrets(encryptedVaults: VaultResponse[] = []) {
-        console.log(" encryptedVaults", encryptedVaults);
-
         const masterKey = await browserService.getData("masterKey", StorageEnum.LOCAL);
         if (!masterKey) {
             throw new Error("Master key not found");
@@ -77,7 +75,6 @@ export class VaultService {
                 return await this.decryptSecretsData(encryptedVault, masterKey.masterKey);
             }),
         );
-        console.log("decrypted secrets", decryptedSecrets);
         return decryptedSecrets;
     }
 
@@ -91,7 +88,6 @@ export class VaultService {
         );
 
         const decryptedSecrets = await decryptMetadata(secrets.encryptedMetadata, secrets.metadataDecryptionHeader, secretKey);
-        console.log("decrypted secrets", decryptedSecrets);
         return decryptedSecrets;
     }
 }

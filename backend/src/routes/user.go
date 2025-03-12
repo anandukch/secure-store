@@ -18,6 +18,8 @@ func (ur *UserRouter) Register(app fiber.Router) {
 		c.Set("Content-Type", "application/json")
 		return c.Next()
 	})
+	router.Get("/all", ur.Handler.GetAllUsers)
+
 	// router.Get("/profile", ur.AuthMiddleware.Middleware, ur.Handler.GetUserProfile)
 	router.Post("/attributes", ur.Handler.GetUserByEmail)
 	router.Get("/:id", ur.Handler.GetUserById)
