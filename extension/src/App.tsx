@@ -26,18 +26,22 @@ function App() {
         console.log("App mounted");
         browserService.getData("token", StorageEnum.LOCAL).then((res) => {
             if (res?.token) {
-                console.log("Token found", res.token);
                 verifyUser(res.token)
                     .then((response) => {
-                        console.log("User verified", response);
+                        if (response == undefined || response.status !== 200) {
+                            browserService.removeData("token", StorageEnum.LOCAL);
+                            browserService.removeData("masterKey", StorageEnum.LOCAL);
+                            setOpenAuthPopup(true);
+                            return;
+                        }
                         setOpenAuthPopup(false);
                         setOpenCredentialsStat(true);
                     })
                     .catch((err) => {
-                        console.log("User not verified", err);
+                        setOpenAuthPopup(true);
+                        setOpenCredentialsStat(false);
                         browserService.removeData("token", StorageEnum.LOCAL);
                         browserService.removeData("masterKey", StorageEnum.LOCAL);
-                        setOpenAuthPopup(true);
                     });
                 // browserService.getData("masterKey", StorageEnum.LOCAL).then((res) => {
                 //     console.log("Master key found", res);
