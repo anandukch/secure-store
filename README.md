@@ -9,7 +9,7 @@ Secure-Store is a privacy-focused, end-to-end encrypted password manager designe
 - **Go Backend**: A lightweight and secure backend for handling user authentication and storage.
 - **Vite + React Web Extension**: A fast and modern UI to manage your credentials conveniently in your browser.
 - **Secure Key Management**: Utilizes modern cryptographic principles to ensure strong password security.
-- **Cross-Platform**: Works on all major browsers with seamless synchronization.
+<!-- - **Cross-Platform**: Works on all major browsers with seamless synchronization. -->
 
 ## Installation
 
@@ -18,7 +18,9 @@ Secure-Store is a privacy-focused, end-to-end encrypted password manager designe
 ```sh
 # Clone the repository
 git clone https://github.com/anandukch/Secure-store.git
-cd Secure-store/server
+cd Secure-store
+
+cd server
 
 # Install dependencies
 make server-dev
@@ -27,7 +29,7 @@ make server-dev
 ### Web Extension (Vite + React)
 
 ```sh
-cd ../extension
+cd extension
 
 # Install dependencies
 npm run dev:chrome

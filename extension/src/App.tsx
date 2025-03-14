@@ -43,17 +43,6 @@ function App() {
                         browserService.removeData("token", StorageEnum.LOCAL);
                         browserService.removeData("masterKey", StorageEnum.LOCAL);
                     });
-                // browserService.getData("masterKey", StorageEnum.LOCAL).then((res) => {
-                //     console.log("Master key found", res);
-
-                //     if (res?.masterKey) {
-
-                //     } else {
-                //         browserService.removeData("token", StorageEnum.LOCAL);
-                //         browserService.removeData("masterKey", StorageEnum.LOCAL);
-                //         setOpenAuthPopup(true);
-                //     }
-                // });
             }
         });
         return () => {

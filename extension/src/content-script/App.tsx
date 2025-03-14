@@ -88,8 +88,10 @@ function App() {
                         label: fieldInfo.label,
                     });
                 }
-                console.log("Credentials", newCredentials);
 
+                // we are managing this session for credential because we are not
+                // able to get the value of credential from the credential state
+                //  if the site reloads after a success login for example
                 sessionStorage.setItem("credentials", JSON.stringify(newCredentials));
 
                 return newCredentials;
@@ -125,7 +127,7 @@ function App() {
                 secrets: credential as Credential[],
             })
             .then((res) => {
-                console.log("Credentials saved", res);
+                // console.log("Credentials saved", res);
                 setShowPopup(false);
             })
             .catch((err) => console.error("Error saving credentials", err))

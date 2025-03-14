@@ -50,6 +50,8 @@ export class VaultService {
             encryptedMetadata: encryptedSecrets.encryptedDataB64,
             metadataDecryptionHeader: encryptedSecrets.decryptionHeaderB64,
         };
+        // console.log("vaultRequest", vaultRequest);
+
         const vaultResponse = await this.createVaultApi(vaultRequest);
         if (vaultResponse.status === 401) {
             // await browserService.removeAllData(StorageEnum.LOCAL);
