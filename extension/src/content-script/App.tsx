@@ -29,11 +29,6 @@ function App() {
         const storedShowPopup = sessionStorage.getItem("showPopup");
         if (storedShowPopup) setShowPopup(true);
 
-        browserService.sendMessage({
-            action: "mount",
-            payload: { url: window.location.href },
-        });
-
         browserService
             .sendMessage({ action: "check_credentials", payload: { url: window.location.href } })
             .then((response) => console.log("Response message:", response));
