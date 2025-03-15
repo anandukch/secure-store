@@ -128,9 +128,9 @@ func (ctrl *AuthHandler) VerifyUser(c *fiber.Ctx) error {
 	if err != nil {
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid email")
 	}
-	_, updatedErr := ctrl.UserService.UpdateUser(c, user.Id.String(), models.User{
-		IsVerified: true,
-	})
+
+	user.IsVerified = true
+	_, updatedErr := ctrl.UserService.UpdateUser(c, user.Id, *user)
 	if updatedErr != nil {
 		return response.JSONResponse(c, http.StatusInternalServerError, "error", updatedErr.Error())
 	}

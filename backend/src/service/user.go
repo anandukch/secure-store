@@ -64,7 +64,7 @@ func (u *UserService) CreateUser(c *fiber.Ctx, user *schemas.CreateUser) (*mongo
 	return result, nil
 }
 
-func (u *UserService) UpdateUser(c *fiber.Ctx, id string, user models.User) (*mongo.UpdateResult, error) {
+func (u *UserService) UpdateUser(c *fiber.Ctx, id primitive.ObjectID, user models.User) (*mongo.UpdateResult, error) {
 	result, err := u.Model.UpdateOne(c.Context(), bson.M{"_id": id}, bson.M{"$set": user})
 	if err != nil {
 		return nil, err

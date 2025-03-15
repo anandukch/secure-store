@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./index.css";
 import "./App.css";
-import browser from "webextension-polyfill";
 import { AuthPopup } from "./components/SignIn";
 import { CredentialStats } from "./components/CredentialStats";
 import { RecoveryKeyPopup } from "./components/RecoveryKeyPop";
@@ -112,7 +111,11 @@ function App() {
     };
 
     const handleAddClick = () => {
-        browserService.removeAllData(StorageEnum.LOCAL);
+        browserService.removeAllData(StorageEnum.LOCAL).then(() => {
+            console.log("All data removed");
+            setOpenCredentialsStat(false);
+            setOpenAuthPopup(true);
+        });
         console.log("Add clicked");
     };
 
