@@ -10,6 +10,7 @@ import { authService } from "./services/auth";
 import { browserService } from "./services/browser";
 import { StorageEnum } from "./common/enum";
 import { verifyUser } from "./axios";
+import { AxiosError } from "axios";
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +68,14 @@ function App() {
                         setOpenCredentialsStat(true);
                     });
                 })
-                .catch((err) => {
+                .catch((err: AxiosError) => {
+                    console.log("err form App", err, err.response?.status);
+
+                    if (err.response?.status === 401) {
+                        setOpenAuthPopup(false);
+
+                        setShowOTPVerification(true);
+                    }
                     setIsLoading(false);
                     console.log(err);
                 });
@@ -111,15 +119,25 @@ function App() {
     const handleOTPVerify = (otp: string) => {
         // In production, verify OTP with backend
         console.log("Verifying OTP:", otp);
-        setShowOTPVerification(false);
-
-        if (authType === "login") {
-            setOpenCredentialsStat(true);
-        } else {
-            const key = crypto.randomUUID() + "-" + Date.now().toString(36);
-            setRecoveryKey(key);
-            setShowRecoveryKey(true);
-        }
+        authService
+            .verifyUserOtp(otp)
+            .then(async (res) => {
+                setShowOTPVerification(false);
+                await browserService.sendLoginMessage(res);
+                if (authType === "login") {
+                    setOpenCredentialsStat(true);
+                } else {
+                    const key = crypto.randomUUID() + "-" + Date.now().toString(36);
+                    setRecoveryKey(key);
+                    setShowRecoveryKey(true);
+                }
+            })
+            .catch((err) => {
+                setShowOTPVerification(false);
+                setOpenCredentialsStat(false);
+                setOpenAuthPopup(true);
+                console.log(err);
+            });
     };
 
     return (

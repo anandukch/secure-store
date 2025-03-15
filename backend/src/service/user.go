@@ -12,7 +12,8 @@ import (
 )
 
 type UserService struct {
-	Model *mongo.Collection
+	Model    *mongo.Collection
+	OtpModel *mongo.Collection
 }
 
 func (r *UserService) GetUserById(c context.Context, id primitive.ObjectID) (*models.User, error) {
@@ -35,20 +36,20 @@ func (r *UserService) GetUserByEmail(c context.Context, email string) (*models.U
 	return &user, nil
 }
 
-
 func (u *UserService) CreateUser(c *fiber.Ctx, user *schemas.CreateUser) (*mongo.InsertOneResult, error) {
 	newUser := models.User{
-		Id:                  primitive.NewObjectID(),
-		Name:                user.Name,
-		Email:               user.Email,
-		EncryptedMasterKey:   user.EncryptedMasterKey,
-		KeyDecryptionNonce:  user.KeyDecryptionNonce,
-		KeyDecryptionSalt:   user.KeyDecryptionSalt,
-		KekOpsLimit:         user.KekOpsLimit,
-		KekMemLimit:         user.KekMemLimit,
+		Id:                 primitive.NewObjectID(),
+		Name:               user.Name,
+		Email:              user.Email,
+		EncryptedMasterKey: user.EncryptedMasterKey,
+		KeyDecryptionNonce: user.KeyDecryptionNonce,
+		KeyDecryptionSalt:  user.KeyDecryptionSalt,
+		KekOpsLimit:        user.KekOpsLimit,
+		KekMemLimit:        user.KekMemLimit,
 		// RecoveryCode:        user.RecoveryCode,
 		PublicKey:           user.PublicKey,
 		EncryptedPrivateKey: user.EncryptedPrivateKey,
+		IsVerified:          false,
 	}
 
 	userExist, err := u.GetUserByEmail(c.Context(), user.Email)
@@ -85,4 +86,41 @@ func (u *UserService) GetAllUsers(c *fiber.Ctx) ([]models.User, error) {
 	}
 
 	return users, nil
+}
+
+func (u *UserService) AddOtp(c *fiber.Ctx, email string, otp string) (*mongo.InsertOneResult, error) {
+	newOtp := models.Otp{
+		Email:  email,
+		Secret: otp,
+	}
+
+	result, err := u.OtpModel.InsertOne(c.Context(), newOtp)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (u *UserService) GetOtp(c *fiber.Ctx, otp string) (*models.Otp, error) {
+	var otpModel models.Otp
+
+	if err := u.OtpModel.FindOne(c.Context(), bson.M{"secret": otp}).Decode(&otpModel); err != nil {
+		return nil, err
+	}
+
+	if _, err := u.OtpModel.DeleteOne(c.Context(), bson.M{"secret": otp}); err != nil {
+		return nil, err
+	}
+
+	return &otpModel, nil
+}
+
+func (u *UserService) DeleteOtp(c *fiber.Ctx, email string) (*mongo.DeleteResult, error) {
+	result, err := u.OtpModel.DeleteMany(c.Context(), bson.M{"email": email})
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

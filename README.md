@@ -1,4 +1,4 @@
-# Secure-Store
+<h1 align="center">Secure-Store</h1>
 
 Secure-Store is a privacy-focused, end-to-end encrypted password manager designed with a zero-trust architecture. It ensures that your sensitive credentials remain secure and accessible only to you. Built with a Go backend and a Vite-powered React web extension, Secure-Store leverages `libsodium` for advanced cryptographic security.
 

@@ -19,6 +19,8 @@ func (authRouter *AuthRoute) Register(router fiber.Router) {
 
 	router.Post("/signup", authRouter.Handler.CreateUser)
 	router.Post("/login", authRouter.Handler.SignIn)
-	router.Post("/send-otp", authRouter.Handler.SendOtp)
-	router.Get("/verify", authRouter.AuthMiddleware.Middleware, authRouter.Handler.VerifyUser)
+	// router.Post("/send-otp", authRouter.Handler.SendOtp)
+	router.Post("/verify-otp", authRouter.Handler.VerifyUser)
+	router.Get("/verify-token", authRouter.AuthMiddleware.Middleware, authRouter.Handler.VerifyToken)
+
 }
