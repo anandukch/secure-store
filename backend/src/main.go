@@ -47,6 +47,7 @@ func main() {
 
 	userService := &service.UserService{
 		Model: config.GetCollection(DB, common.UserModel),
+		OtpModel: config.GetCollection(DB, common.OtpModel),
 	}
 
 	vaultService := &service.VaultService{

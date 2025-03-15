@@ -27,27 +27,27 @@ api.interceptors.request.use(
 );
 
 // let refresh = false;
-api.interceptors.response.use(
-    (response: AxiosResponse) => {
-        return response;
-    },
-    async (error: AxiosError) => {
-        try {
-            if (["401", "403"].includes(error.code || "")) {
-                // take access token from local storage
-                const token = localStorage.getItem("accessToken");
+// api.interceptors.response.use(
+//     (response: AxiosResponse) => {
+//         return response;
+//     },
+//     async (error: AxiosError) => {
+//         try {
+//             if (["401", "403"].includes(error.code || "")) {
+//                 // take access token from local storage
+//                 const token = localStorage.getItem("accessToken");
 
-                setHead(token || "");
-            }
-            // refresh = false;
-            return error;
-        } catch (err) {
-            console.log(err);
-        }
+//                 setHead(token || "");
+//             }
+//             // refresh = false;
+//             return error;
+//         } catch (err) {
+//             console.log(err);
+//         }
 
-        return Promise.reject(error);
-    },
-);
+//         return Promise.reject(error);
+//     },
+// );
 
 // export const apiUserData = () => api.get("/users/me", { withCredentials: true });
 
@@ -65,6 +65,9 @@ export const getSecrets = () => api.get("/vaults");
 export const getSecret = (id: string) => api.get(`/vaults/${id}`);
 export const verifyUser = (token: string) => {
     setHead(token);
-    return api.get("/auth/verify");
+    return api.get("/auth/verify-token");
+};
+export const verifyOtp = (otp: string) => {
+    return api.post("/auth/verify-otp", { otp: otp });
 };
 export default api;

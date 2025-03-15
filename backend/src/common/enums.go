@@ -9,4 +9,5 @@ const (
 const (
 	UserModel  string = "users"
 	VaultModel string = "vault"
+	OtpModel   string = "otp"
 )

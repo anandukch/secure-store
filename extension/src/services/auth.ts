@@ -1,7 +1,7 @@
 import zxcvbn from "zxcvbn";
 
 import { BaseService } from "./base";
-import { getUserAttributes, login, signup } from "../axios";
+import { getUserAttributes, login, signup, verifyOtp } from "../axios";
 
 export interface UserAttributesType {
     email: string;
@@ -133,6 +133,13 @@ export class AuthService extends BaseService {
         // console.log("Encrypted data:", encryptedData);
     }
 
+    public async verifyUserOtp(otp: string) {
+        const res = await verifyOtp(otp);
+        const { data }: { data: LoginResponse } = res.data;
+        return {
+            token: data.token,
+        };
+    }
     public async getMasterKeyFromLocalStorage() {
         const masterKey = await this.checkHealth();
         return masterKey;
