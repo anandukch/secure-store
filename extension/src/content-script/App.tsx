@@ -24,7 +24,7 @@ function App() {
                     setStoredCredentials(response);
                 }
             })
-            .catch((err) => console.error("Error fetching vaults:", err));
+            .catch((err) => console.info("Info from secure-store extension", err));
 
         const storedShowPopup = sessionStorage.getItem("showPopup");
         if (storedShowPopup) setShowPopup(true);

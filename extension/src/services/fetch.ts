@@ -10,7 +10,7 @@ class FetchService {
     async getToken() {
         const data = await browserService.getData("token", StorageEnum.LOCAL);
         if (!data || !data.token) {
-            throw new Error("Token is undefined");
+            throw new Error("User not logged in");
         }
         return data.token;
     }
