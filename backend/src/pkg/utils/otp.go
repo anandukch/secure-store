@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
-
-	"github.com/anandukch/secure-store/src/config"
 )
 
 func GenerateOTP() string {
@@ -19,7 +17,7 @@ func SendOtp(to string) (string, error) {
 	subject := "Your OTP Code"
 	otp := GenerateOTP()
 	body := fmt.Sprintf("Your OTP code is: %s", otp)
-	mailer := config.NewMailer()
+	mailer := NewMailer()
 	err := mailer.SendEmail(to, subject, body)
 	return otp, err
 

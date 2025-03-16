@@ -1,9 +1,11 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from "axios";
 import { VaultRequest } from "../services/vault";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const api: AxiosInstance = axios.create({
     // baseURL: process.env.NEXT_PUBLIC_API_URL,
-    baseURL: "http://localhost:5050/api",
+    baseURL: apiUrl,
     timeout: 10000,
     headers: {
         Accept: "application/json",

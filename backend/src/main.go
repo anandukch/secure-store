@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/anandukch/secure-store/src/common"
@@ -9,6 +10,7 @@ import (
 	"github.com/anandukch/secure-store/src/middlewares"
 	"github.com/anandukch/secure-store/src/routes"
 	"github.com/anandukch/secure-store/src/service"
+	"github.com/joho/godotenv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -20,6 +22,10 @@ func main() {
 	app := fiber.New(fiber.Config{
 		// Prefork: 	 true,
 	})
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,

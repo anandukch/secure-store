@@ -9,6 +9,7 @@ import (
 	"github.com/anandukch/secure-store/src/service"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	// "go.mongodb.org/mongo-driver/bson"
 	// "golang.org/x/crypto/bcrypt"
 )
@@ -34,12 +35,15 @@ func (a *AuthMiddleWare) Middleware(c *fiber.Ctx) error {
 	}
 	claims, err := handler.ExtractClaims(access_token)
 	if err != nil {
+		log.Error(err)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized in extraction of claims"})
 	}
 
 	// objId, _ := primitive.ObjectIDFromHex(claims["id"].(string)) // Perform type assertion
 	user, err := a.UserService.GetUserByEmail(c.Context(), claims["email"].(string))
 	if err != nil {
+		log.Error(err)
+
 		return response.JSONResponse(c, http.StatusBadRequest, "Invalid request", "Invalid credentials")
 	}
 	c.Locals("user", user)

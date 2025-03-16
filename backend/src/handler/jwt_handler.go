@@ -1,19 +1,20 @@
 package handler
 
 import (
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 var (
-	secretKey = []byte("your-secret-key")
+	secretKey = []byte(os.Getenv("JWT_SECRET"))
 )
 
 func GenerateJwtToken(email string) (string, error) {
 	claims := jwt.MapClaims{
 		"email": email,
-		"exp":   time.Now().Add(time.Minute).Unix(),
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
