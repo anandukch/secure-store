@@ -44,9 +44,10 @@ export function SuggestionBox({ credentials, inputRect, onSelect, onClose }: Sug
             }}
         >
             <div style={{ maxHeight: "12rem", overflowY: "auto" }}>
-                {credentials.map((credential, index) => (
-                    <CredentialSuggestion key={index} credential={credential} onSelect={onSelect} />
-                ))}
+                {credentials.length > 0 &&
+                    credentials.map((credential, index) => (
+                        <CredentialSuggestion key={index} credential={credential} onSelect={onSelect} />
+                    ))}
             </div>
         </div>
     );
