@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: go-app-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./.env:/app/.env  # Explicitly mount the .env file
+    ports:
+      - "8080:8080"
+    environment:
+      - ENV_PATH=/app/.env  # Optional, if you want to specify the .env path in the app
+    command: ["./main"]

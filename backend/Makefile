@@ -14,7 +14,7 @@ server: ## Run the server
 
 # Build the Go binary (for future use)
 build: ## Build the Go binary
-	@go build -o dist/server ./src
+	@go build -o dist/server ./src/main.go
 
 server-dev: ## Run the server in development mode
 	@air -c .air.toml
