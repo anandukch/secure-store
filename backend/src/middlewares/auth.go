@@ -2,10 +2,11 @@ package middlewares
 
 import (
 	"net/http"
-	"pass-saver/src/handler"
-	"pass-saver/src/pkg/response"
-	"pass-saver/src/service"
 	"strings"
+
+	"github.com/anandukch/secure-store/src/handler"
+	"github.com/anandukch/secure-store/src/pkg/response"
+	"github.com/anandukch/secure-store/src/service"
 
 	"github.com/gofiber/fiber/v2"
 	// "go.mongodb.org/mongo-driver/bson"

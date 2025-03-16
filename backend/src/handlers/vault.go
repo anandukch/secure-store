@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"pass-saver/src/pkg/models"
-	"pass-saver/src/pkg/response"
-	"pass-saver/src/pkg/schemas"
-	"pass-saver/src/service"
 	"time"
+
+	"github.com/anandukch/secure-store/src/pkg/models"
+	"github.com/anandukch/secure-store/src/pkg/response"
+	"github.com/anandukch/secure-store/src/pkg/schemas"
+	"github.com/anandukch/secure-store/src/service"
 
 	"github.com/gofiber/fiber/v2"
 )

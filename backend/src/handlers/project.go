@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"pass-saver/src/pkg/models"
-	"pass-saver/src/pkg/schemas"
-	"pass-saver/src/service"
+	"github.com/anandukch/secure-store/src/pkg/models"
+	"github.com/anandukch/secure-store/src/pkg/schemas"
+	"github.com/anandukch/secure-store/src/service"
 
 	"github.com/gofiber/fiber/v2"
 )

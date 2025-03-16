@@ -10,7 +10,7 @@ help:
 	@echo "  make reset            : Reset the database (rollback all and migrate up)"
 
 server: ## Run the server
-	@make migrate-up && go run src/server.go src/main.go
+	@go run src/main.go
 
 # Build the Go binary (for future use)
 build: ## Build the Go binary

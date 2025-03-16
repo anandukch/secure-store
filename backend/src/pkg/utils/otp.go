@@ -2,15 +2,16 @@ package utils
 
 import (
 	"fmt"
-	"pass-saver/src/config"
 	"math/rand"
 	"time"
+
+	"github.com/anandukch/secure-store/src/config"
 )
 
 func GenerateOTP() string {
-	rand.Seed(time.Now().UnixNano()) 
-	otp := rand.Intn(900000) + 100000 
-	return fmt.Sprintf("%06d", otp) 
+	rand.Seed(time.Now().UnixNano())
+	otp := rand.Intn(900000) + 100000
+	return fmt.Sprintf("%06d", otp)
 }
 
 func SendOtp(to string) (string, error) {
@@ -23,4 +24,3 @@ func SendOtp(to string) (string, error) {
 	return otp, err
 
 }
-

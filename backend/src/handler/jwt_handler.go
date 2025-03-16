@@ -10,10 +10,12 @@ var (
 	secretKey = []byte("your-secret-key")
 )
 
-func GenerateJwtToken( email string) (string, error) {
-	claims := jwt.MapClaims{}
-	claims["email"] = email
-	claims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
+func GenerateJwtToken(email string) (string, error) {
+	claims := jwt.MapClaims{
+		"email": email,
+		"exp":   time.Now().Add(time.Minute).Unix(),
+	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(secretKey)
 }

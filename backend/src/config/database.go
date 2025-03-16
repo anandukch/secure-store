@@ -31,9 +31,8 @@ func ConnectDB() *mongo.Client {
 
 }
 
-
 var DB_NAME = "secure-store"
 
-func GetCollection(DB *mongo.Client,collectionName string) *mongo.Collection {
+func GetCollection(DB *mongo.Client, collectionName string) *mongo.Collection {
 	return DB.Database(DB_NAME).Collection(collectionName)
 }

@@ -1,7 +1,7 @@
 package response
 
 import (
-	"pass-saver/src/pkg/models"
+	"github.com/anandukch/secure-store/src/pkg/models"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,4 +18,3 @@ func FilteredResponse(user models.User) fiber.Map {
 		"email":    user.Email,
 	}
 }
-

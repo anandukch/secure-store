@@ -2,12 +2,13 @@ package main
 
 import (
 	"os"
-	"pass-saver/src/common"
-	"pass-saver/src/config"
-	"pass-saver/src/handlers"
-	"pass-saver/src/middlewares"
-	"pass-saver/src/routes"
-	"pass-saver/src/service"
+
+	"github.com/anandukch/secure-store/src/common"
+	"github.com/anandukch/secure-store/src/config"
+	"github.com/anandukch/secure-store/src/handlers"
+	"github.com/anandukch/secure-store/src/middlewares"
+	"github.com/anandukch/secure-store/src/routes"
+	"github.com/anandukch/secure-store/src/service"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -46,7 +47,7 @@ func main() {
 	// Initialize services
 
 	userService := &service.UserService{
-		Model: config.GetCollection(DB, common.UserModel),
+		Model:    config.GetCollection(DB, common.UserModel),
 		OtpModel: config.GetCollection(DB, common.OtpModel),
 	}
 
@@ -78,7 +79,7 @@ func main() {
 	// Initialize routes
 
 	authRouter := &routes.AuthRoute{
-		Handler: authController,
+		Handler:        authController,
 		AuthMiddleware: &authMiddleware,
 	}
 

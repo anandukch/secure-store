@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"pass-saver/src/pkg/models"
-	"pass-saver/src/pkg/schemas"
+
+	"github.com/anandukch/secure-store/src/pkg/models"
+	"github.com/anandukch/secure-store/src/pkg/schemas"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"

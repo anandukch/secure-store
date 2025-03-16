@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	"pass-saver/src/pkg/models"
-	"pass-saver/src/pkg/schemas"
+
+	"github.com/anandukch/secure-store/src/pkg/models"
+	"github.com/anandukch/secure-store/src/pkg/schemas"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

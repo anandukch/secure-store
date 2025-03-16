@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"pass-saver/src/handlers"
-	"pass-saver/src/middlewares"
+	"github.com/anandukch/secure-store/src/handlers"
+	"github.com/anandukch/secure-store/src/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 )
