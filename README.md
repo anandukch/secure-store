@@ -17,13 +17,16 @@ Secure-Store is a privacy-focused, end-to-end encrypted password manager designe
 
 ```sh
 # Clone the repository
-git clone https://github.com/anandukch/Secure-store.git
-cd Secure-store
+git clone https://github.com/anandukch/secure-store.git
+cd secure-store
 
-cd server
+cd backend
 
-# Install dependencies
+# run server
 make server-dev
+
+# using docker in dev mode
+make docker compose -f docker-compose.dev.yml up --build
 ```
 
 ### Web Extension (Vite + React)
